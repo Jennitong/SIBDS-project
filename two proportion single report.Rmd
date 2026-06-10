@@ -1,3 +1,19 @@
+---
+title: "Two sample proportion test report (single code)"
+author: "Jenni"
+date: "2026-06-10"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Two sided proportion hypothesis tesing.
+
+
+
+```{r include=FALSE}
 ## Two sample proportion test code for two binary inputs
 
 # the treatment arm total is denoted as n.tx
@@ -74,7 +90,7 @@ two_sample_proportion_test <- function(n.tx,n.ctrl,resp.tx,resp.ctrl,threshold= 
         end = "Thus receiving treatment or not is not associated with the response."
       }}
   
-  return(cat(
+  return(paste0(
     "We are conducting a hypothesis testing question. We assume that the data represent a random sample from the population, ",
     "and the individual values in the sample are independent of each other. ",
     "We are interested in the two-sided hypothesis test of whether receiving treatments or not is associated with the response rate. ",
@@ -95,3 +111,7 @@ two_sample_proportion_test <- function(n.tx,n.ctrl,resp.tx,resp.ctrl,threshold= 
          
 }
 
+```
+
+
+Conclusion: `r two_sample_proportion_test(50,40,30,10)`

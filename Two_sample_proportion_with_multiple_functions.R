@@ -79,7 +79,7 @@ interpret_test <- function(p_value, threshold){
   } else if(p_value < 0.05){
     p_level <- "less than 0.05 (*)"
   } else {
-    p_level <- round(p_value, 4)
+    p_level <- as.character(round(p_value,4))
   }
 
   if(p_value <= threshold){
