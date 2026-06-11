@@ -1,0 +1,226 @@
+---
+title: "Claude Statistical Test Evaluation"
+output:
+  pdf_document:
+    toc: true
+    toc_depth: '3'
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    theme: flatly
+header-includes:
+  - \usepackage{booktabs}
+  - \usepackage{array}
+  - \usepackage{ragged2e}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(knitr)
+library(kableExtra)
+```
+
+## Prompt Used
+
+> "I have a study with X patients in the treatment arm, X patients in the control arm, X responders in the treatment group, and X responders in the control group. Please use the attached file to run the appropriate statistical test and provide summary statistics."
+
+---
+
+## Multiple Codes
+
+### Chat
+
+```{r multiple-codes-chat}
+mc_chat <- data.frame(
+  Test = c(
+    "test(10,NA,1.2,3)\ninvalid",
+    "test(50,40,30,10)\nchisq, dependent",
+    "test(50,40,26,19)\nchisq, independent",
+    "test(20,10,5,2)\nfisher, independent",
+    "test(10,15,10,1)\nfisher, dependent"
+  ),
+  Correctness = c(
+    "T (pointed out NA and 1.2 which will cause error, correct decision)",
+    "T (chi sq, test statistic=11.03, p < 0.001. Correctly used p-value labels, correct decision)",
+    "T (chi sq, test statistic=0.18, p=0.67. Correctly used p-value labels, correct decision)",
+    "T (Fisher, OR=1.33 (small rounding deviation), p=1.0. Correctly used p-value labels, correct decision)",
+    "T (Fisher, OR not shown, p=3.37e-6. Correctly used p-value labels, correct decision)"
+  ),
+  Time = c("11 sec", "26 sec", "25 sec", "27 sec", "38 sec"),
+  Format = c(
+    "Clean, simple",
+    "Clean, with table and sections",
+    "Clean, with table and sections",
+    "Clean, simple, with a few sections",
+    "Clean, with sections and table"
+  ),
+  `Uses Our Code` = c(
+    "Y",
+    "N (R not available, but Claude followed my logic)",
+    "N (R not available, but Claude followed my logic)",
+    "N (R not available, but Claude followed my logic)",
+    "N (R not available, but Claude followed my logic)"
+  ),
+  check.names = FALSE
+)
+
+kable(mc_chat, align = "l", booktabs = TRUE) %>%
+  kable_styling(latex_options = c("striped", "hold_position", "scale_down"), font_size = 9) %>%
+  column_spec(1, bold = TRUE, width = "9em") %>%
+  column_spec(2, width = "16em") %>%
+  column_spec(3, width = "4em") %>%
+  column_spec(4, width = "10em") %>%
+  column_spec(5, width = "10em")
+```
+
+---
+
+### Code
+
+```{r multiple-codes-code}
+mc_code <- data.frame(
+  Test = c(
+    "test(10,NA,1.2,3)\ninvalid",
+    "test(50,40,30,10)\nchisq, dependent",
+    "test(50,40,26,19)\nchisq, independent",
+    "test(20,10,5,2)\nfisher, independent",
+    "test(10,15,10,1)\nfisher, dependent"
+  ),
+  Correctness = c(
+    "T (correctly specified missing and invalid input, give suggestions)",
+    "T (correct p value, test statistics, and decision)",
+    "T (correct p value, test statistics, and decision, chisq)",
+    "T (correct odds ratio, test statistics, and decision, fisher)",
+    "T (correct odds ratio, test statistics, and decision, fisher)"
+  ),
+  Time = c("19 sec", "15 sec", "15 sec", "15 sec", "18 sec"),
+  Format = c(
+    "Simple format",
+    "Simple, with section and table",
+    "Simple and brief with table",
+    "Short, brief, with table",
+    "Short, brief, with summary table"
+  ),
+  `Uses Our Code` = c(
+    "Y (using our logic)",
+    "Y", "Y", "Y", "Y"
+  ),
+  check.names = FALSE
+)
+
+kable(mc_code, align = "l", booktabs = TRUE) %>%
+  kable_styling(latex_options = c("striped", "hold_position", "scale_down"), font_size = 9) %>%
+  column_spec(1, bold = TRUE, width = "9em") %>%
+  column_spec(2, width = "16em") %>%
+  column_spec(3, width = "4em") %>%
+  column_spec(4, width = "10em") %>%
+  column_spec(5, width = "10em")
+```
+
+---
+
+## Single Code
+
+*Parameters: n.tx, n.ctrl, resp.tx, resp.ctrl*
+
+### Chat
+
+```{r single-code-chat}
+sc_chat <- data.frame(
+  Test = c(
+    "test(10,NA,1.2,3)\ninvalid",
+    "test(50,40,30,10)\nchisq, dependent",
+    "test(50,40,26,19)\nchisq, independent",
+    "test(20,10,5,2)\nfisher, independent",
+    "test(10,15,10,1)\nfisher, dependent"
+  ),
+  Accuracy = c(
+    "T (flags NA and 1.2 errors and asks for correct inputs)",
+    "F (incorrect chisq statistic and p-value, although correct significant conclusion)",
+    "T",
+    "F (uses Fisher's and gets correct p-value but incorrect OR)",
+    "T"
+  ),
+  Time = c("20 sec", "39 sec", "43 sec", "1 min 2 sec", "46 sec"),
+  `Results Format` = c(
+    "Brief, clear explanation of errors and offers correction guidelines",
+    "Test selection, contingency table, exact hypothesis test output as coded, summary stats, RR/OR interpretation",
+    "Study inputs, test selection, contingency table, expected counts, test results, exact conclusion as coded, in plain terms",
+    "Study inputs, test selection, test output, summary statistics, conclusion (not as coded), interpretation",
+    "Study inputs, test selection, summary statistics, conclusion (not as coded), note (small sample size)"
+  ),
+  `Uses Our Code` = c(
+    "Y (to acknowledge errors via our standards)",
+    "N (R not available, manually replicated in Python)",
+    "N (R not available, manually executed)",
+    "N (R not available, manually executed)",
+    "N (R not available, manually executed)"
+  ),
+  check.names = FALSE
+)
+
+kable(sc_chat, align = "l", booktabs = TRUE) %>%
+  kable_styling(latex_options = c("striped", "hold_position", "scale_down"), font_size = 9) %>%
+  column_spec(1, bold = TRUE, width = "9em") %>%
+  column_spec(2, width = "12em") %>%
+  column_spec(3, width = "5em") %>%
+  column_spec(4, width = "16em") %>%
+  column_spec(5, width = "10em")
+```
+
+---
+
+### Code
+
+```{r single-code-code}
+sc_code <- data.frame(
+  Test = c(
+    "test(10,NA,1.2,3)\ninvalid",
+    "test(50,40,30,10)\nchisq, dependent",
+    "test(50,40,26,19)\nchisq, independent",
+    "test(20,10,5,2)\nfisher, independent",
+    "test(10,15,10,1)\nfisher, dependent"
+  ),
+  Accuracy = c("T", "T", "T", "T", "T"),
+  Time = c("10 sec", "16 sec", "31 sec", "33 sec", "16 sec"),
+  `Results Format` = c(
+    "Detects errors based on code and returns error message",
+    "Contingency table, statistical test, summary statistics, conclusion (not as coded)",
+    "Contingency table, statistical test, summary statistics, conclusion (not as coded)",
+    "Contingency table, statistical test, summary statistics, conclusion (not as coded)",
+    "Contingency table, statistical test, summary statistics, conclusion (not as coded)"
+  ),
+  `Uses Our Code` = c("Y", "Y", "Y", "Y", "Y"),
+  check.names = FALSE
+)
+
+kable(sc_code, align = "l", booktabs = TRUE) %>%
+  kable_styling(latex_options = c("striped", "hold_position", "scale_down"), font_size = 9) %>%
+  column_spec(1, bold = TRUE, width = "9em") %>%
+  column_spec(2, width = "4em") %>%
+  column_spec(3, width = "4em") %>%
+  column_spec(4, width = "20em") %>%
+  column_spec(5, width = "6em")
+```
+
+---
+
+## Conclusion
+
+```{r summary-table}
+summary_df <- data.frame(
+  Condition = c("Multiple codes, Chat", "Multiple codes, Code", "Single code, Chat", "Single code, Code"),
+  `Mean Execution Time` = c("25.4 sec", "16.4 sec", "42 sec", "21.2 sec"),
+  Correctness = c("5/5", "5/5", "3/5", "5/5"),
+  check.names = FALSE
+)
+
+kable(summary_df, align = "l", booktabs = TRUE) %>%
+  kable_styling(latex_options = c("striped", "hold_position"), full_width = FALSE, font_size = 11) %>%
+  column_spec(1, bold = TRUE)
+```
+
+We can observe clearly that **multiple codes are more efficient than a single code chunk**, and **Code executes more efficiently compared to Chat**. Chat also has a higher mistake rate when using single code. With multiple codes, the summary Claude provides is usually shorter and more brief compared to those generated using single code.
+
+As a result, using multiple codes is more efficient than using single code, and using Code is more efficient and accurate than Chat.
