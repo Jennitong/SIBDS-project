@@ -24,13 +24,6 @@ validate_inputs <- function(n.tx, n.ctrl, resp.tx, resp.ctrl){
     stop("Error: Input invalid. Please check numerical values.")
   }
   
-  TRUE
-}
-
-# contigency table
-create_contingency_table <- function(n.tx, n.ctrl, resp.tx, resp.ctrl){
-  matrix(c(resp.tx,resp.ctrl,n.tx - resp.tx,n.ctrl - resp.ctrl),
-    nrow = 2,byrow = TRUE)
 }
 
 
@@ -105,11 +98,17 @@ interpret_test <- function(p_value, threshold){
   }
   
 }
-
-# Drawing conclusions
-build_conclusion <- function(n.tx, n.ctrl, resp.tx, resp.ctrl, threshold, test_result, interpretation){
+# the major code
+two_sample_proportion_test <- function(n.tx, n.ctrl, resp.tx, resp.ctrl, threshold = 0.05){
   
-  cat(
+  validate_inputs(n.tx,n.ctrl,resp.tx,resp.ctrl)
+  
+  contingency <- matrix(c(resp.tx,resp.ctrl,n.tx - resp.tx,n.ctrl - resp.ctrl),
+                        nrow = 2,byrow = TRUE)
+  test_type <- choose_test(contingency)
+  test_result <- run_selected_test(contingency,test_type)
+  interpretation <- interpret_test(test_result$p_value,threshold)
+  return(cat(
     "We are conducting a hypothesis testing question.",
     "We assume that the data represent a random sample from the population,",
     "and the individual values in the sample are independent of each other.",
@@ -122,17 +121,6 @@ build_conclusion <- function(n.tx, n.ctrl, resp.tx, resp.ctrl, threshold, test_r
     ". At significance level", threshold,  ", we", interpretation$decision,
     "the null hypothesis. There is", interpretation$evidence,
     "statistically significant evidence that response rates differ.", interpretation$conclusion
-  )
-}
-
-# the major code
-two_sample_proportion_test <- function(n.tx, n.ctrl, resp.tx, resp.ctrl, threshold = 0.05){
-  
-  validate_inputs(n.tx,n.ctrl,resp.tx,resp.ctrl)
-  contingency <- create_contingency_table(n.tx, n.ctrl, resp.tx, resp.ctrl)
-  test_type <- choose_test(contingency)
-  test_result <- run_selected_test(contingency,test_type)
-  interpretation <- interpret_test(test_result$p_value,threshold)
-  build_conclusion(n.tx, n.ctrl, resp.tx, resp.ctrl, threshold, test_result, interpretation)
+  ))
 }
 
