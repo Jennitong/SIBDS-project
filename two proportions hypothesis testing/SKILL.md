@@ -1,7 +1,7 @@
 ---
 name: two-proportion-test
 description: >
-  Performs a two proportion hypothesis test in R given four numbers: treatment total,
+  Performs a two proportion test in R given four numbers: treatment total,
   control total, treatment responses, and control responses. Automatically selects
   between a chi-square test and Fisher's exact test based on expected cell count
   criteria (≥ 5 rule), explains the assumptions of the chosen test, and returns
@@ -9,11 +9,11 @@ description: >
   user provides counts from a two-group experiment and wants to compare proportions
   or test for a significant difference — even if they don't use the words "proportion
   test" or "A/B test". Trigger on phrases like "is this significant?", "did the
-  treatment work?", "compare two groups", "conversion rate test", "summary",
-  "decision", "statistical tests", "summary statistics", "I have a study with X
+  treatment work?", "compare two groups", "conversion rate test", "statistical tests", 
+  "summary statistics", "I have a study with X
   patients in the treatment arm", or whenever four numeric inputs represent group
-  sizes and success counts. This skill assumes the two groups are independent
-  (not paired or matched). Do not use for crossover or within-subject designs.
+  sizes and success/response counts. This skill assumes the two groups are independent. 
+  Do not use for crossover or within-subject designs.
 ---
 
 # Two-Sample Proportion Test Skill (R)
@@ -273,7 +273,7 @@ Replace `<n.tx>`, `<n.ctrl>`, `<resp.tx>`, `<resp.ctrl>` with the actual numbers
 
 Write a single cohesive paragraph followed by a summary table. The paragraph must address all four elements in this order:
 
-1. **Background** — state the group sizes, observed responses, and response rates for each group.
+1. **Background** — state the group sizes, observed responses, and response rates for each group, and the null and alternative hypothesis.
 2. **Test chosen and assumptions** — name the test selected, briefly state why (expected counts), and confirm the key assumptions are met.
 3. **Test result** — report the test statistic for chi-square (or odds ratio for Fisher's exact), degrees of freedom (if chi-square), and the p-value (to 4 decimal places if ≥ 0.05, or as `< 0.05`, `< 0.01`, or `< 0.001` with stars otherwise).
 4. **Decision and interpretation** — state whether we reject or fail to reject H₀ (that treatment group and response rate are independent), and explain what this means in plain language for the user's context.
@@ -284,9 +284,9 @@ Write a single cohesive paragraph followed by a summary table. The paragraph mus
 
 | Metric | Treatment | Control |
 |---|---|---|
-| Total (N) | n.tx | n.ctrl |
+| Total | n.tx | n.ctrl |
 | Responses | resp.tx | resp.ctrl |
-| Response rate (p̂) | resp.tx / n.tx | resp.ctrl / n.ctrl |
+| Response rate | resp.tx / n.tx % | resp.ctrl / n.ctrl %|
 | Absolute difference | Δ = \|resp.tx/n.tx − resp.ctrl/n.ctrl\| | — |
 
 Then one line:
