@@ -90,7 +90,7 @@ Expected counts:
 - If **all four expected counts ≥ 5** → use **Chi-square test** (`chisq.test`)
 - If **any expected count < 5** → use **Fisher's exact test** (`fisher.test`)
 
-Compute these values internally only. Do **not** display the expected cell counts, the formulas, or any intermediate table, and do not display test decision at this step. The only number surfaced to the user is the single minimum expected cell count, shown in Step 6.
+Compute these values internally only. Do **not** display the expected cell counts, the formulas, or any intermediate table, and do not display test decision at this step. The only number surfaced to the user is the single minimum expected cell count, used in a sentence, shown in Step 7.
 
 ---
 
@@ -143,14 +143,7 @@ Use these extracted values verbatim when writing the Step 7 report. Do not recom
 
 Output **exactly** the following block — nothing before it, nothing after except waiting for the user's reply. Do not show formulas, intermediate tables, or any other text. Do not returhn any output or text until step 6.
 
-If the minimum expected cell count is ≥ 5 (Chi-square):
-
-> Assuming these numerical inputs are correct (treatment group = `<n.tx>`, control group = `<n.ctrl>`, treatment response = `<resp.tx>`, and control response = `<resp.ctrl>`), we will proceed with the analysis. The minimum expected cell count is `<min_expected>` (> 5), so the Chi-square test will be used. Would you like a **brief**, **moderate**, or **detailed** response?
-
-
-If the minimum expected cell count is < 5 (Fisher's exact):
-
-> Assuming these numerical inputs are correct (treatment group = `<n.tx>`, control group = `<n.ctrl>`, treatment response = `<resp.tx>`, and control response = `<resp.ctrl>`), we will proceed with the analysis. The minimum expected cell count is `<min_expected>` (< 5), so Fisher's exact test will be used. Would you like a **brief**, **moderate**, or **detailed** response?
+> Assuming these numerical inputs are correct (treatment group = `<n.tx>`, control group = `<n.ctrl>`, treatment response = `<resp.tx>`, and control response = `<resp.ctrl>`), we will proceed with the analysis. Would you like a **brief**, **moderate**, or **detailed** response?
 
 Replace each placeholder with its computed value. `<min_expected>` is a single rounded number (no formula, no table). The user can answer both questions at once (e.g., "detailed, and yes please export to HTML"). Wait for the user's answer before generating any output.
 
@@ -166,9 +159,9 @@ Replace each placeholder with its computed value. `<min_expected>` is a single r
 
 ### Brief
 
-2–3 sentences covering: test used(chi-square or Fisher's exact test), key result (statistic + p-value (4 decimal places if ≥ 0.05, otherwise `< 0.05`, `< 0.01`, or `< 0.001` with stars)), and decision (reject / fail to reject null hypothesis).
+2–3 sentences covering: test used(chi-square or Fisher's exact test with minimum expected cell value), key result (statistic + p-value (4 decimal places if ≥ 0.05, otherwise `< 0.05`, `< 0.01`, or `< 0.001` with stars)), and decision (reject / fail to reject null hypothesis).
 
-Then the **summary table** below.
+No table displayed.
 ---
 
 ### Moderate
@@ -176,7 +169,7 @@ Then the **summary table** below.
 A single cohesive paragraph covering all four elements in order:
 
 1. **Background** — group sizes, observed responses, response rates, null and alternative hypothesis.
-2. **Test chosen and assumptions** — test name, why it was selected (expected counts), key assumptions met.
+2. **Test chosen and assumptions** — test name, why it was selected (minimum expected counts), key assumptions met.
 3. **Test result** — test statistic (X² or odds ratio), degrees of freedom if chi-square, and p-value (4 decimal places if ≥ 0.05, otherwise `< 0.05`, `< 0.01`, or `< 0.001` with stars).
 4. **Decision** — reject or fail to reject H₀, and what that means in plain language.
 
@@ -202,7 +195,7 @@ Then a short **Plain-language interpretation** section (3–5 sentences) written
 ---
 Note: All R code chunks must use echo = FALSE (set globally in the setup chunk) so no R code is visible in the rendered report. Clients should not see the code.
 
-### Summary table (for all levels, after the paragraph, rendered via knitr::kable()):
+### Summary table (for moderate and detailed levels only, after the paragraph, rendered via knitr::kable()):
 
 | Metric | Treatment | Control |
 |---|---|---|

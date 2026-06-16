@@ -76,7 +76,7 @@ There is **no** `build_contingency_table()` or `create_contingency_table()` func
 
 Write in Markdown. Use inline R (`` `r expr` ``) or an `echo=FALSE, results='asis'` chunk for numeric values so the report is reproducible. Mirror the detail level the user selected:
 
-- **Brief** → 2–3 sentences + summary table + one-line result
+- **Brief** → 2–3 sentences + no table
 - **Moderate** → single cohesive paragraph + summary table + one-line result
 - **Detailed** → Moderate paragraph + contingency table + summary table + one-line result + plain-language interpretation
 
@@ -100,6 +100,8 @@ Reproduce the exact wording already shown to the user in the chat; do not rephra
 Apply this substitution in every Markdown paragraph, inline R expression, and `paste()`/`sprintf()` call that produces visible text.
 
 ### Summary table
+
+Only show when moderate or detailed is chosen.
 
 Render with `knitr::kable()`:
 

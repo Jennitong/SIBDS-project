@@ -109,19 +109,9 @@ two_sample_proportion_test <- function(n.tx, n.ctrl, resp.tx, resp.ctrl, thresho
   test_type <- choose_test(contingency)
   test_result <- run_selected_test(contingency,test_type)
   interpretation <- interpret_test(test_result$p_value,threshold)
-  return(cat(
-    "We are conducting a hypothesis testing question.",
-    "We assume that the data represent a random sample from the population,",
-    "and the individual values in the sample are independent of each other.",
-    "We are interested in the two-sided hypothesis test of whether receiving treatments or not is associated with the response rate.",
-    "Our null hypothesis is that treatment groups and response rate are independent.",
-    "The response rate in the treatment arm is",
-    round(resp.tx/n.tx,3), "and", round(resp.ctrl/n.ctrl,3), "in the control arm.",
-    "We perform",  test_result$test_name, ". The", test_result$statistic_label,
-    "is", round(test_result$statistic,4), "with p-value", interpretation$p_level,
-    ". At significance level", threshold,  ", we", interpretation$decision,
-    "the null hypothesis. There is", interpretation$evidence,
-    "statistically significant evidence that response rates differ.", interpretation$conclusion
+  return(c(round(resp.tx/n.tx,3), round(resp.ctrl/n.ctrl,3),  test_result$test_name, test_result$statistic_label,
+    round(test_result$statistic,4), interpretation$p_level, interpretation$decision,
+    interpretation$evidence, interpretation$conclusion
   ))
 }
 
