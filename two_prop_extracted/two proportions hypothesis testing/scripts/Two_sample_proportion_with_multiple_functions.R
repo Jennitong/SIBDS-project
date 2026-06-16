@@ -40,6 +40,7 @@ choose_test <- function(contingency){
   
 }
 
+
 #test computation
 run_selected_test <- function(contingency, test_type){
   
@@ -58,8 +59,8 @@ run_selected_test <- function(contingency, test_type){
       list(
         test_name = "Fisher's exact test",
         p_value = result$p.value,
-        statistic = unname(result$estimate),
-        statistic_label = "odds ratio"))
+        statistic = round((resp.tx/(n.tx-resp.tx))/(resp.ctrl/(n.ctrl-resp.ctrl)),4),
+        statistic_label = "sample odds ratio"))
   }
 }
 
