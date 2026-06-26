@@ -40,8 +40,9 @@ choose_test <- function(contingency){
   
 }
 
+
 #test computation
-run_selected_test <- function(contingency, test_type){
+run_selected_test <- function(contingency, test_type, n.tx, n.ctrl, resp.tx, resp.ctrl, threshold = 0.05){
   
   if(test_type == "chisq"){
     result <- suppressWarnings(chisq.test(contingency, correct = FALSE))
@@ -58,8 +59,8 @@ run_selected_test <- function(contingency, test_type){
       list(
         test_name = "Fisher's exact test",
         p_value = result$p.value,
-        statistic = unname(result$estimate),
-        statistic_label = "odds ratio"))
+        statistic = round((resp.tx/(n.tx-resp.tx))/(resp.ctrl/(n.ctrl-resp.ctrl)),4),
+        statistic_label = "sample odds ratio"))
   }
 }
 
@@ -98,6 +99,18 @@ interpret_test <- function(p_value, threshold){
   }
   
 }
+
+confidence_int <- function(n.tx, n.ctrl, resp.tx, resp.ctrl, threshold){
+  p1 = resp.tx/n.tx
+  p2 = resp.ctrl/n.ctrl
+  zcrit = qnorm(p = 1-(threshold/2), mean = 0, sd = 1, lower.tail=TRUE)
+  se = sqrt(p1*(1-p1)/n.tx + p2*(1-p2)/n.ctrl)
+  return(p1-p2 + c(-1,1) * zcrit * se)
+}
+
+
+
+
 # the major code
 two_sample_proportion_test <- function(n.tx, n.ctrl, resp.tx, resp.ctrl, threshold = 0.05){
   
@@ -106,21 +119,12 @@ two_sample_proportion_test <- function(n.tx, n.ctrl, resp.tx, resp.ctrl, thresho
   contingency <- matrix(c(resp.tx,resp.ctrl,n.tx - resp.tx,n.ctrl - resp.ctrl),
                         nrow = 2,byrow = TRUE)
   test_type <- choose_test(contingency)
-  test_result <- run_selected_test(contingency,test_type)
+  test_result <- run_selected_test(contingency, test_type,n.tx, n.ctrl, resp.tx, resp.ctrl, threshold = 0.05)
   interpretation <- interpret_test(test_result$p_value,threshold)
-  return(cat(
-    "We are conducting a hypothesis testing question.",
-    "We assume that the data represent a random sample from the population,",
-    "and the individual values in the sample are independent of each other.",
-    "We are interested in the two-sided hypothesis test of whether receiving treatments or not is associated with the response rate.",
-    "Our null hypothesis is that treatment groups and response rate are independent.",
-    "The response rate in the treatment arm is",
-    round(resp.tx/n.tx,3), "and", round(resp.ctrl/n.ctrl,3), "in the control arm.",
-    "We perform",  test_result$test_name, ". The", test_result$statistic_label,
-    "is", round(test_result$statistic,4), "with p-value", interpretation$p_level,
-    ". At significance level", threshold,  ", we", interpretation$decision,
-    "the null hypothesis. There is", interpretation$evidence,
-    "statistically significant evidence that response rates differ.", interpretation$conclusion
+  confint <- confidence_int(n.tx, n.ctrl, resp.tx, resp.ctrl, threshold)
+  return(c(round(resp.tx/n.tx,3), round(resp.ctrl/n.ctrl,3),  test_result$test_name, test_result$statistic_label,
+    round(test_result$statistic,4), interpretation$p_level, interpretation$decision,
+    interpretation$evidence, interpretation$conclusion, round(confint,digits=4)
   ))
 }
 

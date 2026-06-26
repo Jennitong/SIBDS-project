@@ -1,3 +1,5 @@
+# This is the binary proportion sub skill agent
+
 ---
 name: two-proportion-test
 description: >
@@ -117,7 +119,7 @@ Before showing results, briefly explain the assumptions of the chosen test.
 
 Run the R script using the Bash tool. This is the authoritative computation step — do not calculate p-values, test statistics, or odds ratios yourself. All numerical results in Step 7 must come directly from the output of this command.
 
-From the skill's directory (the folder containing this `SKILL.md`), run:
+From the skill's directory (the folder containing this `binary_proportion_skill.md`), run:
 
 ```bash
 cd "<path-to-skill-directory>" && Rscript -e "
@@ -126,7 +128,7 @@ two_sample_proportion_test(n.tx=<n.tx>, n.ctrl=<n.ctrl>, resp.tx=<resp.tx>, resp
 "
 ```
 
-Replace `<n.tx>`, `<n.ctrl>`, `<resp.tx>`, `<resp.ctrl>` with the actual numbers. Replace `<path-to-skill-directory>` with the actual absolute path to the folder containing this SKILL.md. The `threshold` argument defaults to 0.05; if the user specifies a different significance level, pass it explicitly (e.g., `threshold = 0.01`).
+Replace `<n.tx>`, `<n.ctrl>`, `<resp.tx>`, `<resp.ctrl>` with the actual numbers. Replace `<path-to-skill-directory>` with the actual absolute path to the folder containing this binary_proportion_skill.md`. The `threshold` argument defaults to 0.05; if the user specifies a different significance level, pass it explicitly (e.g., `threshold = 0.01`).
 
 The function prints a full conclusion paragraph to stdout. From that output, extract:
 - The test name (Chi-square or Fisher's exact)
@@ -159,7 +161,7 @@ Replace each placeholder with its computed value. `<min_expected>` is a single r
 
 ### Brief
 
-2–3 sentences covering: test used(chi-square or Fisher's exact test with minimum expected cell value), key result (statistic + p-value (4 decimal places if ≥ 0.05, otherwise `< 0.05`, `< 0.01`, or `< 0.001` with stars)), and decision (reject / fail to reject null hypothesis).
+2–3 sentences covering: test used(chi-square or Fisher's exact test with minimum expected cell value), key result (statistic + p-value (4 decimal places if ≥ 0.05, otherwise `< 0.05`, `< 0.01`, or `< 0.001` with stars)), and decision (reject / fail to reject null hypothesis),confidence interval of the binary proportion (calculated using function `confidence_int` stored as `confint`).
 
 No table displayed.
 ---
@@ -170,7 +172,7 @@ A single cohesive paragraph covering all four elements in order:
 
 1. **Background** — group sizes, observed responses, response rates, null and alternative hypothesis.
 2. **Test chosen and assumptions** — test name, why it was selected (minimum expected counts), key assumptions met.
-3. **Test result** — test statistic (X² or odds ratio), degrees of freedom if chi-square, and p-value (4 decimal places if ≥ 0.05, otherwise `< 0.05`, `< 0.01`, or `< 0.001` with stars).
+3. **Test result** — test statistic (X² or odds ratio), degrees of freedom if chi-square, p-value (4 decimal places if ≥ 0.05, otherwise `< 0.05`, `< 0.01`, or `< 0.001` with stars), and confidence interval.
 4. **Decision** — reject or fail to reject H₀, and what that means in plain language.
 
 Then the **summary table** and **one-line result** below.
@@ -190,7 +192,9 @@ The full **Moderate** paragraph, then:
 
 Then the **summary table** and **one-line result** below.
 
-Then a short **Plain-language interpretation** section (3–5 sentences) written for a non-statistical audience: what does this result mean practically, what can and cannot be concluded, and any relevant caveats (e.g., statistical significance ≠ clinical or practical significance), and the definition of p-value.
+Then a short **Plain-language interpretation** section (3–5 sentences) written for a non-statistical audience: what does this result mean practically, what can and cannot be concluded, and any relevant caveats (e.g., statistical significance ≠ clinical or practical significance), the definition of p-value, the correct interpretation of confidence interval (We are (1-`<threshold>`)% confident that the true difference of probability of response between the two groups falls within `<confint>`. )
+
+- extract the `<confint>` from the output of `Two_sample_proportion_with_multiple_functions.R`, and `<threshold>` is the significance level, which is 5% by default, unless specified.
 
 ---
 Note: All R code chunks must use echo = FALSE (set globally in the setup chunk) so no R code is visible in the rendered report. Clients should not see the code.
@@ -201,16 +205,12 @@ Note: All R code chunks must use echo = FALSE (set globally in the setup chunk) 
 |---|---|---|
 | Total | n.tx | n.ctrl |
 | Response rate | resp.tx / n.tx % | resp.ctrl / n.ctrl % |
-| Risk difference | Δ = \|resp.tx/n.tx − resp.ctrl/n.ctrl\| | — |
+| Risk difference | Δ = \|resp.tx/n.tx − resp.ctrl/n.ctrl\| | CI = confint |
 
 **Note**: For the summary table, do not include the row "Response". Only include "Total", "Response rate", and "Risk difference".
 One line:
 
 `Test: [Chi-square / Fisher's exact] | Statistic: X² = … (df = 1) or Odds Ratio = … | p-value = … | α = 0.05`
-
----
-
-## Examples
 
 ---
 

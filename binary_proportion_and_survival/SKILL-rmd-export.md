@@ -47,14 +47,9 @@ threshold <- 0.05   # replace if user specified a different level
 
 validate_inputs(n.tx, n.ctrl, resp.tx, resp.ctrl)
 
-# build contingency matrix inline — there is no build_contingency_table() function
-contingency <- matrix(
-  c(resp.tx, resp.ctrl, n.tx - resp.tx, n.ctrl - resp.ctrl),
-  nrow = 2, byrow = TRUE
-)
-
 test_type   <- choose_test(contingency)           # returns "chisq" or "fisher"
-test_result <- run_selected_test(contingency, test_type)   # requires both arguments
+test_result <- run_selected_test(contingency, test_type,n.tx, n.ctrl, resp.tx, resp.ctrl,threshold=0.05)   # requires both arguments
+confint <- confidence_int(n.tx, n.ctrl, resp.tx, resp.ctrl, threshold)
 interp      <- interpret_test(test_result$p_value, threshold)  # takes p_value, not the full result list
 ```
 
@@ -66,11 +61,11 @@ Replace `<n.tx>`, `<n.ctrl>`, `<resp.tx>`, `<resp.ctrl>` with the actual numbers
 |---|---|---|
 | `validate_inputs` | `n.tx, n.ctrl, resp.tx, resp.ctrl` | stops with error if invalid |
 | `choose_test` | `contingency` (matrix) | `"chisq"` or `"fisher"` |
-| `run_selected_test` | `contingency, test_type` | list: `test_name`, `p_value`, `statistic`, `statistic_label` |
+| `run_selected_test` | `contingency, test_type, n.tx, n.ctrl, resp.tx, resp.ctrl, threshold = 0.05` | list: `test_name`, `p_value`, `statistic`, `statistic_label` |
 | `interpret_test` | `p_value, threshold` | list: `p_level`, `decision`, `evidence`, `conclusion` |
 | `two_sample_proportion_test` | `n.tx, n.ctrl, resp.tx, resp.ctrl, threshold=0.05` | prints the full conclusion paragraph |
 
-There is **no** `build_contingency_table()` or `create_contingency_table()` function — always build the matrix inline as shown above.
+- Always build the matrix inline as shown above.
 
 ### Narrative section
 
@@ -96,8 +91,17 @@ Reproduce the exact wording already shown to the user in the chat; do not rephra
 | alpha / α | α | `&alpha;` |
 | times / × | × | `&times;` |
 | bullet / • | • | `&#8226;` |
+| asterisk / * | * | `&#42;` |
 
 Apply this substitution in every Markdown paragraph, inline R expression, and `paste()`/`sprintf()` call that produces visible text.
+
+**Asterisk / p-value stars rule:** The `interp$p_level` string returned by `interpret_test()` may contain `*`, `**`, or `***` inside parentheses (e.g. `"less than 0.001 (***)"``). When rendered inside a bold Markdown span (`**...**`), these asterisks are consumed by the Markdown parser, collapsing `(***)` to `()`. Always escape them with `gsub()` before inline use:
+
+```r
+`r gsub("\\*", "&#42;", interp$p_level)`
+```
+
+Use this form everywhere `interp$p_level` appears inline in the `.Rmd`.
 
 ### Summary table
 
@@ -116,7 +120,7 @@ knitr::kable(
                   paste0("&Delta; = ", round(abs(resp.tx/n.tx - resp.ctrl/n.ctrl)*100, 1), "%")),
     Control   = c(n.ctrl,
                   paste0(round(resp.ctrl / n.ctrl * 100, 1), "%"),
-                  "&mdash;")
+                                    paste0("CI = [", round(confint_result[1],4), ", ", round(confint_result[2],4), "]"))
   ),
   format  = "html",
   escape  = FALSE   # required so HTML entities are rendered, not printed literally
