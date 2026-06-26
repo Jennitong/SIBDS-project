@@ -16,7 +16,7 @@ description: >
   and Independent Observations.
 ---
 
-**Highest order: always display the Kaplan-Meier plot inline in the window directly, in the correct order afeter other tables**
+**Highest order: always display the Kaplan-Meier plot inline in the window directly, do not display as a separate link. Do not display in the wrong section and say "(Displayed above)", this is not allowed. Show the plot in the correct order afeter other tables, IN LINE**
 
 ## Trigger
 
@@ -127,6 +127,8 @@ Present as a formatted table (pairwise p value table for levels or interactions)
 
 ### Step 7 — Kaplan-Meier Plot
 
+**Note: show the plot directly inline following the correct order**
+
 Produce a KM survival curve plot using `graph_lrt(groups,event,time)`, or `graph_lrt(group_1, group_2, event, time)` in the R codes.
 
 Required plot elements, as specified in the code:
@@ -140,9 +142,13 @@ Required plot elements, as specified in the code:
 
 ## Step 8 — Ask for Detail Level and Export Preference
 
-Ask for the response level: **Would you like to have a brief, moderate or detailed response?**
-Output **exactly** the following block — nothing before it, nothing after except waiting for the user's reply. Do not show formulas, intermediate tables, or any other text.
-> Assuming these vector inputs are correct, do not ask for confirmation.
+Ask for the response level using the exact wording as below:
+
+> Assuming these vector inputs are correct (time = `<time>`, event = `<event>`, categorical group = `<group1>`, and (*optional*) categorical group 2 = `<group2>`), we will proceed with the analysis. Would you like a **brief** (test statistic, p-value, graph, and one-line conclusion), **moderate** (adds assumption checks and supporting tables), or **detailed** (full background, definitions, and step-by-step interpretation) response?
+
+Output **exactly** the above sentence — nothing before it, nothing after except waiting for the user's reply. Do not show formulas, intermediate tables, or any other text.
+
+**note: Assuming these vector inputs are correct, do not ask for confirmation.**
 ---
 
 ## Step 9 — Output
@@ -214,7 +220,7 @@ List of all strata (group1 × group2 combinations) with n, events, and any spars
 Pairwise table for p values among groups or interactions.
 
 ### 7. Kaplan-Meier Plot
-The plot must be rendered under the Kaplan-Meier Plot in the order as specified.
+**The plot must be rendered under the Kaplan-Meier Plot in the order as specified. Must be in line in correct order, not else where.**
 Rendered inline in the window directly, so the user could see without the need of downloading anything.
 Must be displayed explicitly.
 

@@ -67,12 +67,19 @@ Before running any test, check all of the following. If any check fails, report 
 
 ## Step 2 — Create Contingency Table
 
-Build a 2×2 contingency table from the four inputs. Show the table in the final report.
+Build a 2×2 contingency table and inline barplot from the four inputs. Show the table in the final report.
 
+**Contingeny Table**
 |           | Response   | No Response         |
 |-----------|------------|---------------------|
 | Treatment | resp.tx    | n.tx − resp.tx      |
 | Control   | resp.ctrl  | n.ctrl − resp.ctrl  |
+
+**bar plot**
+
+Display the response rates as a side-by-side horizontal bar chart rendered directly in the chat window using an inline HTML/SVG widget. Show Treatment (`<resp.tr>/<.tr>`%) and Control (`<resp.ctrl>/<n.ctrl>`%) as styled bars with percentage labels inside each bar, a title 'RESPONSE RATES', and use a blue bar for Treatment and a gray bar for Control. Make it visually polished with clean typography and rounded bars.
+
+extract `<resp.tr>/<.tr>` and `<resp.ctrl>/<n.ctrl>` from the prompt, and round to two decimal places for display.
 
 ---
 
@@ -145,7 +152,7 @@ Use these extracted values verbatim when writing the Step 7 report. Do not recom
 
 Output **exactly** the following block — nothing before it, nothing after except waiting for the user's reply. Do not show formulas, intermediate tables, or any other text. Do not returhn any output or text until step 6.
 
-> Assuming these numerical inputs are correct (treatment group = `<n.tx>`, control group = `<n.ctrl>`, treatment response = `<resp.tx>`, and control response = `<resp.ctrl>`), we will proceed with the analysis. Would you like a **brief**, **moderate**, or **detailed** response?
+> Assuming these numerical inputs are correct (treatment group = `<n.tx>`, control group = `<n.ctrl>`, treatment response = `<resp.tx>`, and control response = `<resp.ctrl>`), we will proceed with the analysis. Would you like a **brief** (test statistic, p-value, and one-line conclusion), **moderate** (adds assumption checks and supporting tables), or **detailed** (full background, definitions, and step-by-step interpretation) response?
 
 Replace each placeholder with its computed value. `<min_expected>` is a single rounded number (no formula, no table). The user can answer both questions at once (e.g., "detailed, and yes please export to HTML"). Wait for the user's answer before generating any output.
 
@@ -190,6 +197,12 @@ The full **Moderate** paragraph, then:
 | Treatment | resp.tx    | n.tx − resp.tx      |
 | Control   | resp.ctrl  | n.ctrl − resp.ctrl  |
 
+**Response rate bar plot:**
+
+instruction: Display the response rates as a side-by-side horizontal bar chart rendered directly in the chat window using an inline HTML/SVG widget. Show Treatment (`<resp.tr>/<.tr>`%) and Control (`<resp.ctrl>/<n.ctrl>`%) as styled bars with percentage labels inside each bar, a title 'RESPONSE RATES', and use a blue bar for Treatment and a gray bar for Control. Make it visually polished with clean typography and rounded bars.
+
+extract `<resp.tr>/<.tr>` and `<resp.ctrl>/<n.ctrl>` from the prompt, and round to two decimal places for display.
+
 Then the **summary table** and **one-line result** below.
 
 Then a short **Plain-language interpretation** section (3–5 sentences) written for a non-statistical audience: what does this result mean practically, what can and cannot be concluded, and any relevant caveats (e.g., statistical significance ≠ clinical or practical significance), the definition of p-value, the correct interpretation of confidence interval (We are (1-`<threshold>`)% confident that the true difference of probability of response between the two groups falls within `<confint>`. )
@@ -213,6 +226,14 @@ One line:
 `Test: [Chi-square / Fisher's exact] | Statistic: X² = … (df = 1) or Odds Ratio = … | p-value = … | α = 0.05`
 
 ---
+
+### Notation
+
+Throughout the analysis, use `*` only for p-value's.Do not use other symbol.
+- p-value < 0.001 (***)
+- p-value < 0.01 (**)
+- p-value < 0.05 (*)
+- P value *(rounded to 4 decimal places when p-valye >= 0.05)*
 
 ## Step 8 — R Markdown / HTML Export (if requested)
 
