@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="generator" content="litedown 0.9">
+<title>Survival Analysis Report</title>
+<style type="text/css">
+body {
+  font-family: sans-serif;
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 1.5;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+body, .abstract, code, .footnotes, footer, #refs, .caption { font-size: .9em; }
+li li { font-size: .95em; }
+ul:has(li > input[type="checkbox"]) { list-style: none; padding-left: 1em; }
+*, :before, :after { box-sizing: border-box; }
+a { color: steelblue; }
+pre, img { max-width: 100%; }
+pre { white-space: pre-wrap; word-break: break-word; }
+pre code { display: block; padding: 1em; overflow-x: auto; }
+code { font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace; }
+:not(pre, th) > code, code[class], div > .caption { background: #f8f8f8; }
+pre > code:is(:not([class]), .language-plain, .language-none, .plain), .box, .figure, .table { background: inherit; border: 1px solid #eee; }
+pre > code {
+  &.message { border-color: #9eeaf9; }
+  &.warning { background: #fff3cd; border-color: #fff3cd; }
+  &.error { background: #f8d7da; border-color: #f8d7da; }
+}
+.fenced-chunk { border-left: 1px solid #666; }
+.code-fence {
+  opacity: .4;
+  border: 1px dashed #666;
+  border-left: 2px solid;
+  &:hover { opacity: inherit; }
+}
+.box, .figure, .table, table { margin: 1em auto; }
+div > .caption { padding: 1px 1em; }
+.figure { p:has(img, svg), pre:has(svg) { text-align: center; } }
+.flex-col { display: flex; justify-content: space-between; }
+table {
+  &:only-child:not(.table > *) { margin: auto; }
+  th, td { padding: 5px; font-variant-numeric: tabular-nums; }
+  thead, tfoot, tr:nth-child(even) { background: whitesmoke; }
+  thead th { border-bottom: 1px solid #ddd; }
+  &:not(.datatable-table) {
+    border-top: 1px solid #666;
+    border-bottom: 1px solid #666;
+  }
+}
+blockquote {
+  color: #666;
+  margin: 0;
+  padding: 1px 1em;
+  border-left: .5em solid #eee;
+}
+hr, .footnotes::before { border: 1px dashed #ddd; }
+.frontmatter { text-align: center; }
+#TOC {
+  a { text-decoration: none; }
+  ul { list-style: none; padding-left: 1em; }
+  & > ul { padding: 0; }
+  ul ul { border-left: 1px solid lightsteelblue; }
+}
+.body h2 { border-bottom: 1px solid #666; }
+.body .appendix, .appendix ~ h2 { border-bottom-style: dashed; }
+.main-number::after { content: "."; }
+span[class^="ref-number-"] { font-weight: bold; }
+.ref-number-fig::after, .ref-number-tab::after { content: ":"; }
+.cross-ref-chp::before { content: "Chapter "; }
+.cross-ref-sec::before { content: "Section "; }
+.cross-ref-fig::before, .ref-number-fig::before { content: "Figure "; }
+.cross-ref-tab::before, .ref-number-tab::before { content: "Table "; }
+.cross-ref-eqn::before, .MathJax_ref:has(mjx-mtext > mjx-c + mjx-c)::before { content: "Equation "; }
+.abstract, #refs {
+  &::before { display: block; margin: 1em auto; font-weight: bold; }
+}
+.abstract::before { content: "Abstract"; text-align: center; }
+#refs::before { content: "Bibliography"; font-size: 1.5em; }
+.ref-paren-open::before { content: "("; }
+.ref-paren-close::after { content: ")"; }
+.ref-semicolon::after { content: "; "; }
+.ref-and::after { content: " and "; }
+.ref-et-al::after { content: " et al."; font-style: italic; }
+.footnote-ref a {
+  &::before { content: "["; }
+  &::after { content: "]"; }
+}
+section.footnotes {
+  margin-top: 2em;
+  &::before { content: ""; display: block; max-width: 20em; }
+}
+.fade {
+  background: repeating-linear-gradient(135deg, white, white 30px, #ddd 32px, #ddd 32px);
+  opacity: 0.6;
+}
+
+@media print {
+  body { max-width: 100%; }
+  tr, img { break-inside: avoid; }
+}
+@media only screen and (min-width: 992px) {
+  body:not(.pagesjs) pre:has(.line-numbers):not(:hover) { white-space: pre; }
+}
+</style>
+</head>
+<body>
+<div class="frontmatter">
+<div class="title"><h1>Survival Analysis Report</h1></div>
+<div class="date"><h3>2026-06-29</h3></div>
+</div>
+<div class="body">
+<div id="TOC">
+<ul>
+<li><a href="#sec:hypothesis-test-summary">Hypothesis Test Summary</a></li>
+<li><a href="#sec:background-and-method">Background and Method</a></li>
+<li><a href="#sec:test-results">Test Results</a></li>
+<li><a href="#sec:quantile-table">Quantile Table</a></li>
+<li><a href="#sec:mean-survival-table">Mean Survival Table</a></li>
+<li><a href="#sec:kaplan-meier-plot">Kaplan-Meier Plot</a></li>
+<li><a href="#sec:plain-language-interpretation">Plain-Language Interpretation</a></li>
+</ul>
+</div>
+<h2 id="sec:hypothesis-test-summary">Hypothesis Test Summary</h2>
+<p><strong>Null Hypothesis:</strong> Survival curves are identical across all groups of gender.</p>
+<p><strong>Alternative Hypothesis:</strong> At least one survival curve differs.</p>
+<table>
+<thead>
+<tr>
+<th>Statistic</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>χ² statistic</td>
+<td>3.971</td>
+</tr>
+<tr>
+<td>Degrees of freedom</td>
+<td>1</td>
+</tr>
+<tr>
+<td>p-value</td>
+<td>&lt; 0.05 (*)</td>
+</tr>
+<tr>
+<td>Decision</td>
+<td>Reject Null Hypothesis at α = 0.05</td>
+</tr>
+</tbody>
+</table>
+<h2 id="sec:background-and-method">Background and Method</h2>
+<p>This analysis employs the Kaplan-Meier (KM) estimator to compare time-to-event survival distributions between two gender groups (0 = female, n = 65; 1 = male, n = 35) using the WHAS100 dataset. The event of interest (<code>fstat = 1</code>) was observed in 28 females and 23 males; remaining participants were right-censored, meaning their follow-up ended before the event occurred (e.g., administrative study end on 31 December 2002). The time variable (<code>lenfol</code>) records the number of days from hospital admission to the event or censoring.</p>
+<p>The log-rank test was selected as the appropriate comparison method. This test assumes: (1) <strong>Proportional Hazards</strong> — the ratio of hazard rates between groups remains constant over time; (2) <strong>Non-Informative Censoring</strong> — the reason a participant is censored is unrelated to their risk of the event; and (3) <strong>Independent Observations</strong> — survival times across individuals are mutually independent.</p>
+<h2 id="sec:test-results">Test Results</h2>
+<p>The log-rank test yielded χ²(1) = 3.971, p &lt; 0.05 (*). We therefore <strong>Reject Null Hypothesis</strong> at significance level α = 0.05, concluding that there is statistically significant evidence that the survival curves differ between female and male patients.</p>
+<h2 id="sec:quantile-table">Quantile Table</h2>
+<table class="table table-striped table-hover" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Survival Quantiles with 95% Confidence Intervals</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Group </th>
+   <th style="text-align:right;"> n </th>
+   <th style="text-align:right;"> Events </th>
+   <th style="text-align:left;"> Median (95% CI) </th>
+   <th style="text-align:left;"> Q25 (95% CI) </th>
+   <th style="text-align:left;"> Q75 (95% CI) </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> gender = 0 (female) </td>
+   <td style="text-align:right;"> 65 </td>
+   <td style="text-align:right;"> 28 </td>
+   <td style="text-align:left;"> 2624 (1907–NR) </td>
+   <td style="text-align:left;"> 1054 (274–1624) </td>
+   <td style="text-align:left;"> NR (2624–NR) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> gender = 1 (male) </td>
+   <td style="text-align:right;"> 35 </td>
+   <td style="text-align:right;"> 23 </td>
+   <td style="text-align:left;"> 1806 (461–2201) </td>
+   <td style="text-align:left;"> 302 (98–1002) </td>
+   <td style="text-align:left;"> 2710 (2031–NR) </td>
+  </tr>
+</tbody>
+</table>
+<h2 id="sec:mean-survival-table">Mean Survival Table</h2>
+<table class="table table-striped table-hover" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>Restricted Mean Survival Time with 95% Confidence Intervals</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Group </th>
+   <th style="text-align:right;"> Mean Survival </th>
+   <th style="text-align:right;"> SE </th>
+   <th style="text-align:right;"> 95% CI Lower </th>
+   <th style="text-align:right;"> 95% CI Upper </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> gender = 0 (female) </td>
+   <td style="text-align:right;"> 1907.42 </td>
+   <td style="text-align:right;"> 126.01 </td>
+   <td style="text-align:right;"> 1660.44 </td>
+   <td style="text-align:right;"> 2154.40 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> gender = 1 (male) </td>
+   <td style="text-align:right;"> 1475.21 </td>
+   <td style="text-align:right;"> 181.71 </td>
+   <td style="text-align:right;"> 1119.07 </td>
+   <td style="text-align:right;"> 1831.36 </td>
+  </tr>
+</tbody>
+</table>
+<p><em>Mean survival is bounded by the largest observed event time in each group (restricted mean survival time).</em></p>
+<h2 id="sec:kaplan-meier-plot">Kaplan-Meier Plot</h2>
+<p><img src="figure/km-plot-1.png" alt="plot of chunk km-plot" /></p>
+<h2 id="sec:plain-language-interpretation">Plain-Language Interpretation</h2>
+<p>Females in this dataset had notably longer survival times than males. The median survival time for females was 2624 days (95% CI: 1907–NR), compared to 1806 days for males (95% CI: 461–2201 days) — a difference of over two and a half years at the median. The mean restricted survival time also favoured females at 1907.4 days (95% CI: 1660.4–2154.4) versus 1475.2 days for males (95% CI: 1119.1–1831.4).</p>
+<p>The p-value of 0.0463 is the probability of observing a difference in survival curves this large or larger purely by chance, assuming no true effect of gender on survival. A value below 0.05 indicates this difference is unlikely to be due to random variation alone. We are 95% confident that the true median survival time for females lies above 1,907 days, and for males between 461 and 2,201 days.</p>
+<p>While this result is statistically significant, statistical significance does not automatically imply clinical or practical importance — the observed difference may be confounded by other variables such as age, BMI, or comorbidities that were not accounted for in this analysis. Additionally, with only 35 male participants, the confidence intervals for the male group are notably wider, reflecting greater uncertainty in those estimates. These findings should be considered exploratory and interpreted alongside other clinical and demographic factors.</p>
+</div>
+</body>
+</html>

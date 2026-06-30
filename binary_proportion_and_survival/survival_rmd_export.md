@@ -221,6 +221,8 @@ cat(paste0(
 
 Use `results='asis'` on this chunk so the Markdown table renders.
 
+**note**: if there are NR in the confidence interval, write **"NR in confidence interval bounds indicates the interval could not be estimated — too few events were observed for the survival curve to reach that quantile threshold within the follow-up period."** underneath the table (quantile or mean survival table, depending on which one has NR or both), otherwise do not write.
+
 ### Quantile Table
 
 Show in moderate and detailed levels.
@@ -228,8 +230,6 @@ Show in moderate and detailed levels.
 ```r
 qtbl <- data.frame(
   Group   = survival_quantile_CI$group,
-  n       = "<fill from fit summary>",
-  Events  = "<fill from fit summary>",
   `Median (95% CI)` = paste0(
     round(survival_quantile_CI$q50, 2),
     " (", round(survival_quantile_CI$q50_lower, 2),
@@ -248,6 +248,7 @@ qtbl <- data.frame(
 knitr::kable(qtbl, format = "html", escape = FALSE,
              caption = "Survival Quantiles with 95% Confidence Intervals") %>%
   kableExtra::kable_styling(full_width = FALSE)
+  
 ```
 
 NA values in quantile columns mean the event was not reached by the end of follow-up; render as `"NR"` (Not Reached):
@@ -273,9 +274,10 @@ mtbl <- data.frame(
 knitr::kable(mtbl, format = "html", escape = FALSE,
              caption = "Restricted Mean Survival Time with 95% Confidence Intervals") %>%
   kableExtra::kable_styling(full_width = FALSE)
+ 
 ```
 
-Add a note below the table: "Mean survival is bounded by the largest observed event time in each group (restricted mean survival time)."
+Add a note below the table: **"Mean survival is bounded by the largest observed event time in each group (restricted mean survival time)."**
 
 ### Interaction Summary (Two-Covariate Case Only)
 
@@ -294,7 +296,7 @@ knitr::kable(int_tbl, format = "html", escape = FALSE,
   kableExtra::kable_styling(full_width = FALSE)
 ```
 
-Flag any stratum with fewer than 5 events with a note: "Warning: stratum [X] has fewer than 5 events — results for this stratum should be interpreted cautiously."
+Flag any stratum with fewer than 5 events with a note: **"Warning: stratum [X] has fewer than 5 events — results for this stratum should be interpreted cautiously."**
 
 ### Pairwise Table (Conditional)
 
@@ -308,9 +310,13 @@ fit_pairwise_obj <- pairwise_survdiff(Surv(time, event) ~ groups,
                                       data = data.frame(groups, event, time),
                                       p.adjust.method = "bonferroni")
 # Two groups:
-# fit_pairwise_obj <- pairwise_survdiff(Surv(time, event) ~ group,
-#                                       data = dat,
-#                                       p.adjust.method = "bonferroni")
+dat_pw <- data.frame(group = interaction(group_1, group_2), event = event, time = time)
+fit_pairwise_obj <- survminer::pairwise_survdiff(
+  survival::Surv(time, event) ~ group,
+  data = dat_pw,
+  p.adjust.method = "bonferroni"
+)
+
 
 pw_mat <- round(fit_pairwise_obj$p.value, 4)
 pw_mat[is.na(pw_mat)] <- "—"
@@ -384,7 +390,7 @@ Use `file://` URLs (e.g. `file:///Users/alice/project/survival_report.html`) so 
 
 | Situation | Behavior in the `.Rmd` |
 |---|---|
-| Quantile not reached (NA) | Replace NA with `"NR"` (Not Reached) in the table |
+| Quantile not reached (NA) | Replace NA with `"NR"` (Not Reached) in the table and add a footnote explaining that the interval could not be estimated due to insufficient events reaching that quantile threshold.|
 | No events in a group | Show warning inline: "Group [X] has no events; quantile undefined." |
 | p-value stars inside bold Markdown | Always use `&#42;` — never raw `*` |
 | All observations censored | Abort with error chunk: `stop("No events observed — survival analysis not possible.")` |

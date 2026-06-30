@@ -13,6 +13,9 @@
 # the final code two_sample_proportion_test uses all the inputs and helper fuctions to get to the correct conclusion
 
 # confirming valid inputs
+library(Hmisc)
+library(PropCIs)
+
 validate_inputs <- function(n.tx, n.ctrl, resp.tx, resp.ctrl){
   
   if(n.tx < resp.tx |
@@ -100,15 +103,16 @@ interpret_test <- function(p_value, threshold){
   
 }
 
-confidence_int <- function(n.tx, n.ctrl, resp.tx, resp.ctrl, threshold){
-  p1 = resp.tx/n.tx
-  p2 = resp.ctrl/n.ctrl
-  zcrit = qnorm(p = 1-(threshold/2), mean = 0, sd = 1, lower.tail=TRUE)
-  se = sqrt(p1*(1-p1)/n.tx + p2*(1-p2)/n.ctrl)
-  return(p1-p2 + c(-1,1) * zcrit * se)
+confidence_int <- function(n.tx, n.ctrl, resp.tx, resp.ctrl, threshold = 0.05){
+  # Clopper-Pearson (exact) CIs for each arm
+  ci_tx   = round(binconf(x = resp.tx,  n = n.tx, method = "exact"),4)
+  ci_ctrl = round(binconf(x = resp.ctrl,  n = n.ctrl,  method = "exact"),4)
+  # Newcombe method
+  ci_rd = diffscoreci(x1 = resp.tx, n1 = n.tx, x2 = resp.ctrl, n2 = n.ctrl, conf.level = 1-threshold)
+  return(list(ci_tx = ci_tx,
+              ci_ctrl = ci_ctrl,
+              ci_rd = ci_rd))
 }
-
-
 
 
 # the major code
@@ -124,7 +128,7 @@ two_sample_proportion_test <- function(n.tx, n.ctrl, resp.tx, resp.ctrl, thresho
   confint <- confidence_int(n.tx, n.ctrl, resp.tx, resp.ctrl, threshold)
   return(c(round(resp.tx/n.tx,3), round(resp.ctrl/n.ctrl,3),  test_result$test_name, test_result$statistic_label,
     round(test_result$statistic,4), interpretation$p_level, interpretation$decision,
-    interpretation$evidence, interpretation$conclusion, round(confint,digits=4)
+    interpretation$evidence, interpretation$conclusion, confint
   ))
 }
 

@@ -16,7 +16,10 @@ description: >
   and Independent Observations.
 ---
 
-**Highest order: always display the Kaplan-Meier plot inline in the window directly, do not display as a separate link. Do not display in the wrong section and say "(Displayed above)", this is not allowed. Show the plot in the correct order afeter other tables, IN LINE**
+**Highest order: Highest order: Display the Kaplan-Meier plot by rendering it via show_widget only after all text output (hypothesis test summary, tables) has been written. The show_widget call must be made strictly as the last action under Section 7 of the Output Specification, strictly after interaction table, or pairwise table when it is called. Never before. All other output must appear as plain markdown text in the chat response, not inside a widget. The plot should be the one rendered by R code `graph_lrt`, nothing else. **
+
+- **note**: generate the graph inline using `svglite::svglite()`.
+
 
 ## Trigger
 
@@ -100,6 +103,9 @@ From the R code summary, refer to `survival_quantile_CI`, extract for each group
 - **75th percentile** survival time with **95% CI**
 
 Present as a formatted table (one row per group/strata).
+
+"When extracting quantile values from survival_quantile_CI, replace any NA value with NR (Not Reached) before displaying. This applies to all quantile columns (q25, q50, q75) and their confidence interval bounds."
+
 
 ### Step 4 — Mean Survival with Confidence Interval
 
@@ -192,9 +198,9 @@ Note: All R code chunks must use echo = FALSE (set globally in the setup chunk) 
 
 Return the following based on the response brief/moderate/detailed level, in order:
 
-**if any of the following is required, be sure to follow the numerical order (of those required) below when displayed.**
+**if any of the following is required, be sure to follow the order that things are mentioned (of those required) as below when displayed.**
 
-### 1. Hypothesis Test Summary
+### Hypothesis Test Summary
 Null Hypothesis: Survival curves are identical across all groups of [group1] [and group2].
 Alternative Hypothesis: At least one survival curve differs.
 
@@ -204,25 +210,32 @@ p-value:              X.XXXX [* / ** / *** / (none)]
 Decision:             Reject Null Hypothesis  /  Fail to reject Null Hypothesis  at significance level = 0.05
 
 
-### 2. Quantile Table
-One row per group/strata. Columns: Group | n | Events | Median (95% CI) | Q25 (95% CI) | Q75 (95% CI)
+### Quantile Table
+One row per group/strata. Columns: Group | Median (95% CI) | Q25 (95% CI) | Q75 (95% CI)
 
 
 For **two categorical dataset** only, refer to the `two_groups_combined.R` file in the same path, and refer to `group_summary` to find relevant `n` and `Events` for this table.
 
-### 3. Mean Survival Table
+"Any NA in the Median, Q25, or Q75 columns (including CI bounds) must be displayed as NR in the table. Do not display raw NA."
+
+If there are NR in the table, output the exact sentence beneath the quantile table: **NR = Not Reached. The survival estimate did not decline to the specified percentile during the follow-up period.**
+
+###  Mean Survival Table
 One row per group/strata. Columns: Group | Mean Survival | SE | 95% CI Lower | 95% CI Upper
 
-### 4. Interaction Summary *(only if two covariates)*
+
+###  Interaction Summary *(only if two covariates)*
 List of all strata (group1 × group2 combinations) with n, events, and any sparsity warnings.
 
-### 6. Pairwise Table *(only if more than two levels of the single categorical variablee OR two covariates, AND p value is less than the threshold)*
+### Pairwise Table *(only if more than two levels of the single categorical variablee OR two covariates, AND p value is less than the threshold)*
 Pairwise table for p values among groups or interactions.
 
-### 7. Kaplan-Meier Plot
+### Kaplan-Meier Plot
 **The plot must be rendered under the Kaplan-Meier Plot in the order as specified. Must be in line in correct order, not else where.**
 Rendered inline in the window directly, so the user could see without the need of downloading anything.
-Must be displayed explicitly.
+Must be displayed explicitly. show the exact plot rendered using R code.
+
+DO NOT shade confidence intervals in the plot. The margin should only contain the groups and color/linetype used, as rendered using R code. Nothing else.
 
 **note: do not add additional notation section**
 

@@ -1,0 +1,170 @@
+---
+title: "Survival Analysis Report"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    html_encoding: "UTF-8"
+encoding: UTF-8
+---
+
+```{r setup, echo=FALSE, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+options(encoding = "UTF-8")
+
+skill_dir <- "/Users/tongzj/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin/208a1ca7-880b-4ac7-a2c9-05379a00effd/b921ad37-a4f4-428a-acd2-b0faf2258a66/skills/statistical-analysis"
+source(file.path(skill_dir, "scripts/survival_single_groups.R"))
+
+if (!requireNamespace("knitr",      quietly = TRUE)) install.packages("knitr")
+if (!requireNamespace("kableExtra", quietly = TRUE)) install.packages("kableExtra")
+library(knitr)
+library(kableExtra)
+```
+
+```{r compute, echo=FALSE}
+data      <- read.csv("/Users/tongzj/Desktop/SIBDS dsci/llm project/SIBDS research project (Jenni, Lilian)/mock_datasets/whas100_12.csv")
+groups    <- data$agecat
+event     <- data$fstat
+time      <- data$lenfol
+threshold <- 0.05
+
+# ---- patch the naming bug in the sourced script ----
+validation_input <- validation_input_inputs
+
+res                  <- lrt_test(groups, event, time, threshold)
+lr_chisq             <- res$logrank["chisq"]
+lr_p                 <- res$logrank["p.value"]
+lr_df                <- length(unique(groups)) - 1
+survival_mean_CI     <- res$survival_mean_CI
+survival_quantile_CI <- res$survival_quantile_CI
+
+p_label <- if (lr_p < 0.001) {
+  "< 0.001 (&#42;&#42;&#42;)"
+} else if (lr_p < 0.01) {
+  "< 0.01 (&#42;&#42;)"
+} else if (lr_p < 0.05) {
+  "< 0.05 (&#42;)"
+} else {
+  as.character(round(lr_p, 4))
+}
+
+decision <- if (lr_p < threshold) "Reject Null Hypothesis" else "Fail to Reject Null Hypothesis"
+
+# pairwise (Bonferroni, >2 levels)
+fit_pairwise_obj <- pairwise_survdiff(
+  Surv(time, event) ~ groups,
+  data = data.frame(groups, event, time),
+  p.adjust.method = "bonferroni"
+)
+
+# group-level n and events for quantile table
+fit_summary <- survfit(Surv(time, event) ~ groups, data = data.frame(groups, event, time))
+s_tbl       <- summary(fit_summary)$table
+group_n      <- s_tbl[, "records"]
+group_events <- s_tbl[, "events"]
+```
+
+## Hypothesis Test Summary
+
+```{r hyp-summary, echo=FALSE, results='asis'}
+cat(paste0(
+  "**Null Hypothesis:** Survival curves are identical across all groups of `agecat`.\n\n",
+  "**Alternative Hypothesis:** At least one survival curve differs.\n\n",
+  "| Statistic | Value |\n",
+  "|---|---|\n",
+  "| &chi;&sup2; statistic | ", round(lr_chisq, 2), " |\n",
+  "| Degrees of freedom | ", lr_df, " |\n",
+  "| p-value | ", p_label, " |\n",
+  "| Decision | ", decision, " at &alpha; = ", threshold, " |\n\n"
+))
+```
+
+## Background and Methods
+
+This analysis examines whether survival times &mdash; measured in days from hospital admission (`lenfol`) until death (`fstat = 1`) or administrative censoring (`fstat = 0`) &mdash; differ across four age categories (`agecat`): [32,60), [60,70), [70,80), and [80,92]. Because `agecat` has four levels, the **log-rank test with Bonferroni correction** was applied to control the family-wise error rate across pairwise comparisons. The log-rank test was selected as the appropriate non-parametric test for comparing survival curves across independent groups. Three key assumptions underlie this analysis: **(1) Proportional Hazards** &mdash; the hazard ratio between any two groups remains approximately constant over time; **(2) Non-Informative Censoring** &mdash; the reason a subject is censored is unrelated to their risk of experiencing the event; and **(3) Independent Observations** &mdash; survival times are independent across individuals.
+
+The overall log-rank test yielded &chi;&sup2;(`r lr_df`) = `r round(lr_chisq, 2)`, p `r p_label`. We therefore **`r decision`** at significance level &alpha; = `r threshold`, concluding that at least one age group has a significantly different survival pattern from the others.
+
+## Quantile Table
+
+```{r quantile-table, echo=FALSE}
+qtbl <- data.frame(
+  Group   = survival_quantile_CI$group,
+  n       = group_n,
+  Events  = group_events,
+  `Median (95% CI)` = paste0(
+    ifelse(is.na(survival_quantile_CI$q50),    "NR", round(survival_quantile_CI$q50, 2)),
+    " (",
+    ifelse(is.na(survival_quantile_CI$q50_lower), "NR", round(survival_quantile_CI$q50_lower, 2)),
+    "&ndash;",
+    ifelse(is.na(survival_quantile_CI$q50_upper), "NR", round(survival_quantile_CI$q50_upper, 2)),
+    ")"),
+  `Q25 (95% CI)` = paste0(
+    ifelse(is.na(survival_quantile_CI$q25),    "NR", round(survival_quantile_CI$q25, 2)),
+    " (",
+    ifelse(is.na(survival_quantile_CI$q25_lower), "NR", round(survival_quantile_CI$q25_lower, 2)),
+    "&ndash;",
+    ifelse(is.na(survival_quantile_CI$q25_upper), "NR", round(survival_quantile_CI$q25_upper, 2)),
+    ")"),
+  `Q75 (95% CI)` = paste0(
+    ifelse(is.na(survival_quantile_CI$q75),    "NR", round(survival_quantile_CI$q75, 2)),
+    " (",
+    ifelse(is.na(survival_quantile_CI$q75_lower), "NR", round(survival_quantile_CI$q75_lower, 2)),
+    "&ndash;",
+    ifelse(is.na(survival_quantile_CI$q75_upper), "NR", round(survival_quantile_CI$q75_upper, 2)),
+    ")"),
+  check.names = FALSE
+)
+
+knitr::kable(qtbl, format = "html", escape = FALSE,
+             caption = "Survival Quantiles with 95% Confidence Intervals") %>%
+  kableExtra::kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
+```
+
+*NR = Not Reached. The survival estimate did not decline to the specified percentile during the follow-up period. NR in confidence interval bounds indicates the interval could not be estimated &mdash; too few events were observed for the survival curve to reach that quantile threshold within the follow-up period.*
+
+## Mean Survival Table
+
+```{r mean-table, echo=FALSE}
+mtbl <- data.frame(
+  Group           = survival_mean_CI$group,
+  `Mean Survival` = round(survival_mean_CI$rmean, 2),
+  SE              = round(survival_mean_CI$se, 2),
+  `95% CI Lower`  = round(survival_mean_CI$lower_ci, 2),
+  `95% CI Upper`  = round(survival_mean_CI$upper_ci, 2),
+  check.names = FALSE
+)
+
+knitr::kable(mtbl, format = "html", escape = FALSE,
+             caption = "Restricted Mean Survival Time with 95% Confidence Intervals") %>%
+  kableExtra::kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
+```
+
+*Mean survival is bounded by the largest observed event time in each group (restricted mean survival time).*
+
+## Pairwise Comparisons (Bonferroni-Adjusted)
+
+```{r pairwise-table, echo=FALSE}
+pw_mat <- round(fit_pairwise_obj$p.value, 4)
+pw_df  <- as.data.frame(pw_mat)
+pw_df[is.na(pw_df)] <- "&mdash;"
+
+knitr::kable(pw_df, format = "html", escape = FALSE,
+             caption = "Pairwise Log-Rank p-values (Bonferroni-adjusted)") %>%
+  kableExtra::kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
+```
+
+## Kaplan-Meier Plot
+
+```{r km-plot, echo=FALSE, fig.width=9, fig.height=7}
+graph_lrt(groups, event, time)
+```
+
+## Plain-Language Interpretation
+
+This analysis examined whether survival times differed among patients in four age groups using data from 100 individuals admitted for acute myocardial infarction. The time variable (`lenfol`) measured the number of days from hospital admission until death or last known follow-up, and patients who did not die during follow-up were treated as censored observations. Because `agecat` has four levels, the log-rank test with Bonferroni correction was applied to control for the elevated chance of false positives that arises when making multiple pairwise comparisons simultaneously.
+
+The p-value &mdash; the probability of observing a difference this large or larger by chance alone, assuming no true difference exists &mdash; was less than 0.01, providing strong evidence against the null hypothesis that all survival curves are identical. In plain language, **older patients died sooner on average**: the [80,92] group had a median survival of approximately 889 days and a restricted mean of 1,219 days, compared to the [32,60) group whose median was never reached within the follow-up period and whose restricted mean was approximately 2,201 days. The Bonferroni-adjusted pairwise comparisons indicate that the [80,92] group was significantly different from [32,60) (p = 0.007) and [60,70) (p = 0.036), while no statistically significant pairwise differences were detected between the two younger groups or between [70,80) and [80,92].
+
+We are 95% confident that the true median or mean survival time for each group lies within the confidence interval shown in the tables above. It is important to note that statistical significance does not by itself imply clinical magnitude &mdash; the observed pattern is consistent with the well-established relationship between advanced age and poorer post-myocardial infarction prognosis, but other confounders (e.g., comorbidities, BMI, sex, treatment intensity) are not accounted for in this univariate analysis, and caution is warranted when drawing causal conclusions.

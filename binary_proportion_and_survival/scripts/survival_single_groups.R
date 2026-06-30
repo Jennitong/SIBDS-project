@@ -10,36 +10,49 @@ library(survminer)
 # To extract the correct variables from the dataset, ask the client which variable contains the group, event and time.
 # Once extracted, put the variables into the function once called under the correct name and order.
 
-validation <- function(groups, event, time ){
-  if(!is.numeric(time)){
-    stop("Data type not compatible: time to event is not a numerical variable as expected")
-  }
-  if(length(unique(event)) > 2){
-    stop("Data type not compatible: event is not a binary variable as expected")
-  }
-  if(length(groups) != length(event) |
-     length(event) != length(time) |
-     length(groups) != length(time)){
-    stop("Inputs not compatible: Incomplete data for certain participants")
-  }
-}
+validation_input <- function(groups, event, time) {
+  
+  if (length(groups) != length(event) |
+      length(event) != length(time)) {
+    stop(
+      "Inputs not compatible: groups, event, and time must have the same length.")}
+  
+  if (any(is.na(groups)) | any(is.na(event)) | any(is.na(time))) {
+    stop("Missing values detected in groups, event, or time.")}
+  
+  if (!is.numeric(time)) {
+    stop("Data type not compatible: time must be numeric.")}
 
+  if (any(is.infinite(time))) {stop("Time contains infinite values.")}
+  
+  if (any(time < 0)) {stop("Time to event cannot be negative.")}
+
+  if (!all(event %in% c(0, 1))) {stop(
+      "Event variable must contain only 0 (censored) and 1 (event).")}
+  
+  if (sum(event) == 0) {stop("No events observed in the dataset.")}
+  
+  if (length(unique(groups)) < 2) {stop("At least two groups are required for comparison.")}
+  
+  events_by_group <- tapply(event, groups, sum)
+  
+  if (any(events_by_group == 0)) {
+    warning("One or more groups contain no observed events.")}
+
+}
 
 graph_lrt <- function(groups,event,time){
   survfit2(Surv(time, event)~groups) %>%
-  ggsurvfit() +
-  add_censor_mark() +
-  add_confidence_interval()+
-  add_quantile()+
-  add_pvalue(location="annotation",
-             caption="Log-rank {p.value}") +
-  labs(title="Kaplan-Meier Estimates of Overall Survival Between Groups")
+    ggsurvfit() +
+    add_censor_mark() +
+    add_pvalue(location="annotation",
+               caption="Log-rank {p.value}") +
+    labs(title="Kaplan-Meier Estimates of Overall Survival Between Groups")
 }
-
 
 lrt_test <- function(groups, event, time, threshold = 0.05){
   
-  validation(groups, event, time)
+  validation_input(groups, event, time)
   
   dat <- data.frame(groups, event, time)
   
@@ -103,19 +116,22 @@ result = if(lr_p < threshold){
         ". The p.value is ", as.character(p_level))
     if (test == "log-rank test"){
       int
-    } else if (test == "log-rank test and Bonferroni Test"){
+    } else if (test == "log-rank test and Bonferroni Correction"){
       list(int, print(fit_pairwise))
     }
   } else {
-    paste0("We do not reject the null hypothesis and conclude that there is no statistically significant survival difference under the significan level of ",
+    paste0("We do not reject the null hypothesis and conclude that there is no statistically significant survival difference under the significance level of ",
           as.character(threshold),". The p.value is ", as.character(p_level))
   }
+
   
   return(list(
     logrank = c(chisq = lr_chisq, p.value = lr_p),
     result = result,
+    degrees_of_freedom = lr_df,
     survival_mean_CI = mean_df,
     survival_quantile_CI = quantile_df,
     graph = graph_lrt(groups,event,time)
   ))
 }
+

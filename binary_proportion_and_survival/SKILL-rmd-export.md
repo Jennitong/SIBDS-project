@@ -73,7 +73,7 @@ Write in Markdown. Use inline R (`` `r expr` ``) or an `echo=FALSE, results='asi
 
 - **Brief** → 2–3 sentences + no table
 - **Moderate** → single cohesive paragraph + summary table + one-line result
-- **Detailed** → Moderate paragraph + contingency table + summary table + one-line result + plain-language interpretation
+- **Detailed** → Moderate paragraph + bar plot +  contingency table + summary table + one-line result + plain-language interpretation
 
 Reproduce the exact wording already shown to the user in the chat; do not rephrase or add new content.
 
@@ -88,12 +88,12 @@ Reproduce the exact wording already shown to the user in the chat; do not rephra
 | superscript 2 | ² | `&sup2;` |
 | greater-or-equal | ≥ | `&ge;` |
 | less-or-equal | ≤ | `&le;` |
-| alpha / α | α | `&alpha;` |
+| alpha / α | α | `alpha` |
 | times / × | × | `&times;` |
 | bullet / • | • | `&#8226;` |
 | asterisk / * | * | `&#42;` |
 
-Apply this substitution in every Markdown paragraph, inline R expression, and `paste()`/`sprintf()` call that produces visible text.
+"Apply UTF-8 characters directly in Markdown prose. Use HTML entities only inside HTML tags or paste()/sprintf() chunks with results='asis'."
 
 **Asterisk / p-value stars rule:** The `interp$p_level` string returned by `interpret_test()` may contain `*`, `**`, or `***` inside parentheses (e.g. `"less than 0.001 (***)"``). When rendered inside a bold Markdown span (`**...**`), these asterisks are consumed by the Markdown parser, collapsing `(***)` to `()`. Always escape them with `gsub()` before inline use:
 
@@ -103,29 +103,79 @@ Apply this substitution in every Markdown paragraph, inline R expression, and `p
 
 Use this form everywhere `interp$p_level` appears inline in the `.Rmd`.
 
+### Bar Plot
+
+The text for the percentages should be **black**, do not scale the bars.
+
+```{r, echo=FALSE, results='asis'}
+treat_pct <- round(resp.tx  / n.tx   * 100, 2)
+ctrl_pct  <- round(resp.ctrl / n.ctrl * 100, 2)
+
+cat(sprintf('
+<div style="font-family:sans-serif; padding:16px; border:1px solid #e0e0e0;
+            border-radius:8px; max-width:600px; margin:16px 0;">
+  <p style="font-weight:bold; font-size:13px; letter-spacing:.05em;
+            color:#555; margin:0 0 16px 0;">RESPONSE RATES</p>
+  <div style="display:flex; align-items:center; margin-bottom:16px; gap:12px;">
+    <span style="width:80px; font-size:14px; color:#333;">Treatment</span>
+    <div style="background:#3b6fd4; color:white; font-weight:bold; font-size:13px;
+                padding:6px 10px; border-radius:6px; width:%.2f%%;">%.2f%%</div>
+    <span style="margin-left:auto; color:#888; font-size:13px;">%d / %d</span>
+  </div>
+  <div style="display:flex; align-items:center; gap:12px;">
+    <span style="width:80px; font-size:14px; color:#333;">Control</span>
+    <div style="background:#888888; color:white; font-weight:bold; font-size:13px;
+                padding:6px 10px; border-radius:6px; width:%.2f%%;">%.2f%%</div>
+    <span style="margin-left:auto; color:#888; font-size:13px;">%d / %d</span>
+  </div>
+  <div style="margin-top:16px; display:flex; gap:16px; font-size:13px; color:#555;">
+    <span><span style="display:inline-block;width:12px;height:12px;background:#3b6fd4;
+          border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Treatment</span>
+    <span><span style="display:inline-block;width:12px;height:12px;background:#888888;
+          border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Control</span>
+  </div>
+</div>',
+treat_pct, treat_pct, resp.tx,   n.tx,
+ctrl_pct,  ctrl_pct,  resp.ctrl, n.ctrl))
+```
+
+
 ### Summary table
 
 Only show when moderate or detailed is chosen.
 
 Render with `knitr::kable()`:
 
-Use HTML entities for all special characters — `&Delta;` for Δ, `&mdash;` for —, `&ge;` for ≥, `&le;` for ≤, `&chi;` for χ, `&sup2;` for ², `&alpha;` for α. Never paste the raw Unicode glyph into a string literal; always use the entity form so pandoc outputs the correct character regardless of the system locale.
+Use HTML entities for all special characters — `&Delta;` for Δ, `&mdash;` for —, `&ge;` for ≥, `&le;` for ≤, `&chi;` for χ, `&sup2;` for ², `alpha` for α. Never paste the raw Unicode glyph into a string literal; always use the entity form so pandoc outputs the correct character regardless of the system locale.
 
 ```r
+result <- two_sample_proportion_test(n.tx, n.ctrl, resp.tx, resp.ctrl)
+
 knitr::kable(
   data.frame(
     Metric    = c("Total", "Response rate", "Risk difference"),
-    Treatment = c(n.tx,
-                  paste0(round(resp.tx / n.tx * 100, 1), "%"),
-                  paste0("&Delta; = ", round(abs(resp.tx/n.tx - resp.ctrl/n.ctrl)*100, 1), "%")),
-    Control   = c(n.ctrl,
-                  paste0(round(resp.ctrl / n.ctrl * 100, 1), "%"),
-                                    paste0("CI = [", round(confint_result[1],4), ", ", round(confint_result[2],4), "]"))
+    Treatment = c(
+      n.tx,
+      paste0(round(resp.tx / n.tx * 100, 2), "% (",
+             round(result$ci_tx[, "Lower"] * 100, 2), "%, ",
+             round(result$ci_tx[, "Upper"] * 100, 2), "%)"),
+      paste0("&Delta; = ", round(abs(resp.tx/n.tx - resp.ctrl/n.ctrl) * 100, 2), "%")
+    ),
+    Control   = c(
+      n.ctrl,
+      paste0(round(resp.ctrl / n.ctrl * 100, 2), "% (",
+             round(result$ci_ctrl[, "Lower"] * 100, 2), "%, ",
+             round(result$ci_ctrl[, "Upper"] * 100, 2), "%)"),
+      paste0("95% CI: (", round(result$ci_rd$conf.int[1] * 100, 2), "%, ",
+                           round(result$ci_rd$conf.int[2] * 100, 2), "%)")
+    )
   ),
-  format  = "html",
-  escape  = FALSE   # required so HTML entities are rendered, not printed literally
+  format = "html", escape = FALSE
 )
 ```
+
+Show this line of sentence underneath the table: **The confidence intervals for response rates are computed using Clopper-Pearson, and the confidence interval for the response rate difference is computed using Newcombe method.**
+
 
 ### Notation rule
 

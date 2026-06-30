@@ -77,7 +77,7 @@ Build a 2×2 contingency table and inline barplot from the four inputs. Show the
 
 **bar plot**
 
-Display the response rates as a side-by-side horizontal bar chart rendered directly in the chat window using an inline HTML/SVG widget. Show Treatment (`<resp.tr>/<.tr>`%) and Control (`<resp.ctrl>/<n.ctrl>`%) as styled bars with percentage labels inside each bar, a title 'RESPONSE RATES', and use a blue bar for Treatment and a gray bar for Control. Make it visually polished with clean typography and rounded bars.
+Display the response rates as a side-by-side horizontal bar chart rendered directly in the chat window using an inline HTML/SVG widget. Show Treatment (`<resp.tr>/<.tr>`%) and Control (`<resp.ctrl>/<n.ctrl>`%) as styled bars with percentage labels inside each bar, a title 'RESPONSE RATES', and use a blue bar for Treatment and a gray bar for Control. Make it visually polished with clean typography and rounded bars. The percentages should be written in **black** color, and do not scale the bars.
 
 extract `<resp.tr>/<.tr>` and `<resp.ctrl>/<n.ctrl>` from the prompt, and round to two decimal places for display.
 
@@ -162,6 +162,7 @@ Replace each placeholder with its computed value. `<min_expected>` is a single r
 
 **Tone for all levels:** Professional but accessible. Write for a stakeholder who understands "statistically significant" but does not need to verify the math. Define p-value briefly inline for people who chose "detailed response" as "the probability of observing a difference this large (or larger) by chance alone if there were truly no effect." Also explicitly state what the null hypothesis refers to in "moderate" and "detailed" response chosers. Never show the R code in output.
 
+**note: do not show anything with `tx` or `ctrl` directly. State the hypothesis using words and not notation. Anything with `tx` and `ctrl` is for code only, not for report directly.** 
 ---
 
 
@@ -217,10 +218,13 @@ Note: All R code chunks must use echo = FALSE (set globally in the setup chunk) 
 | Metric | Treatment | Control |
 |---|---|---|
 | Total | n.tx | n.ctrl |
-| Response rate | resp.tx / n.tx % | resp.ctrl / n.ctrl % |
-| Risk difference | Δ = \|resp.tx/n.tx − resp.ctrl/n.ctrl\| | CI = confint |
+| Response rate | resp.tx / n.tx % (`two_sample_proportion_test(n.tx, n.ctrl, resp.tx, resp.ctrl)$ci_tx[, c("Lower","Upper")]*100`) % | resp.ctrl / n.ctrl % (`two_sample_proportion_test(n.tx, n.ctrl, resp.tx, resp.ctrl)$ci_ctrl[, c("Lower","Upper")]*100`) %|
+| Risk difference | Δ = \|resp.tx/n.tx − resp.ctrl/n.ctrl\| | CI = (`two_sample_proportion_test(n.tx, n.ctrl, resp.tx, resp.ctrl)$ci_rd[, c("Lower","Upper")]*100`) % |
 
-**Note**: For the summary table, do not include the row "Response". Only include "Total", "Response rate", and "Risk difference".
+Show this line of sentence underneath the table: **The confidence intervals for response rates are computed using Clopper-Pearson, and the confidence interval for the response rate difference is computed using Newcombe method.**
+
+
+**Note**: For the summary table, do not include the row "Response". Only include "Total", "Response rate", and "Risk difference". Refer to the R code when calculating confidence intervals.
 One line:
 
 `Test: [Chi-square / Fisher's exact] | Statistic: X² = … (df = 1) or Odds Ratio = … | p-value = … | α = 0.05`
