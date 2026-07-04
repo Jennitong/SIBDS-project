@@ -13,7 +13,7 @@ Follow these steps to install our SKILL.md statistical assistant:
 
 4. Under the 'Skills' tab, select 'Add' and then 'Upload a skill.'
 
-5. Upload the `binary_proportion_and_survival.zip`. Make sure to upload this exact file only.
+5. Upload the `binary_proportion_and_survival.zip`. Make sure to upload this exact file only, do not unzip.
 
 ## Usage
 
