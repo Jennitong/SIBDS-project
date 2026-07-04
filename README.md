@@ -5,7 +5,7 @@ This is the project for SIBDS 2026 research project, focusing on LLM, R code and
 
 Follow these steps to install our SKILL.md statistical assistant:
 
-1. Download the binary_proportion_and_survival.zip.
+1. Download the `binary_proportion_and_survival.zip.`
 
 2. Go to claude.com and open the sidebar.
 
@@ -13,7 +13,7 @@ Follow these steps to install our SKILL.md statistical assistant:
 
 4. Under the 'Skills' tab, select 'Add' and then 'Upload a skill.'
 
-5. Upload the binary_proportion_and_survival.zip.
+5. Upload the `binary_proportion_and_survival.zip`. Make sure to upload this exact file only.
 
 ## Usage
 
