@@ -54,7 +54,7 @@ To use this Skill, users could explicitly ask Claude Code to 'use the binary_pro
   - "Survival probability"
 
 
-**Note to first time users**- this file will automatically install R in Claude and save results in a folder in local desktop. Please give permission for complete analysis result.
+**Note to first time users** - this file will automatically install R in Claude and save results in a folder in local desktop. Please give permission for complete analysis result.
 
 
 
