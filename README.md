@@ -33,7 +33,7 @@ To use our SKILL.md statistical assistant:
 
 To use this Skill, users could explicitly ask Claude Code to 'use the binary_proportion_and_survival skill to conduct the analysis'. Otherwise, users could trigger tasks through task-specific phrases: 
 
--If you would like to trigger the binary proportions hypothesis testing (via Chi-sq test or Fisher's Exact test), provide four numeric inputs representing group sizes and success/response counts. Then use the words:
+- If you would like to trigger the binary proportions hypothesis testing (via Chi-sq test or Fisher's Exact test), provide four numeric inputs representing group sizes and success/response counts. Then use the words:
 
   - "Did the treatment work"
   - "Compare two groups"
@@ -42,7 +42,7 @@ To use this Skill, users could explicitly ask Claude Code to 'use the binary_pro
   - "Summary statistics"
   - "I have a study with X patients in the treatment arm, X patients in the control arm, X responders in the treatment group, and X responders in the control group."
 
--If you would like to trigger the survival analysis that compares between and within covariates, provide a dataset that contains event, time, covariates, and use the words:
+- If you would like to trigger the survival analysis that compares between and within covariates, provide a dataset that contains event, time, covariates, and use the words:
 
   - "Survival analysis"
   - "Kaplan-Meier"
@@ -54,7 +54,7 @@ To use this Skill, users could explicitly ask Claude Code to 'use the binary_pro
   - "Survival probability"
 
 
-Note to first time users- this file will automatically install R in Claude and save results in a folder in local desktop. Please give permission for complete analysis result.
+**Note to first time users**- this file will automatically install R in Claude and save results in a folder in local desktop. Please give permission for complete analysis result.
 
 
 
