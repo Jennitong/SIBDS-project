@@ -45,7 +45,7 @@ choose_test <- function(contingency){
 
 
 #test computation
-run_selected_test <- function(contingency, test_type, n.tx, n.ctrl, resp.tx, resp.ctrl, threshold = 0.05){
+run_selected_test <- function(contingency, test_type){
   
   if(test_type == "chisq"){
     result <- suppressWarnings(chisq.test(contingency, correct = FALSE))
@@ -123,7 +123,7 @@ two_sample_proportion_test <- function(n.tx, n.ctrl, resp.tx, resp.ctrl, thresho
   contingency <- matrix(c(resp.tx,resp.ctrl,n.tx - resp.tx,n.ctrl - resp.ctrl),
                         nrow = 2,byrow = TRUE)
   test_type <- choose_test(contingency)
-  test_result <- run_selected_test(contingency, test_type,n.tx, n.ctrl, resp.tx, resp.ctrl, threshold = 0.05)
+  test_result <- run_selected_test(contingency, test_type)
   interpretation <- interpret_test(test_result$p_value,threshold)
   confint <- confidence_int(n.tx, n.ctrl, resp.tx, resp.ctrl, threshold)
   return(c(round(resp.tx/n.tx,3), round(resp.ctrl/n.ctrl,3),  test_result$test_name, test_result$statistic_label,

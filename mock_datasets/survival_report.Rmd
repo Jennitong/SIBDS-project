@@ -24,17 +24,17 @@ library(dplyr)
 ```
 
 ```{r computation, echo=FALSE}
-data      <- read.csv("/Users/tongzj/Desktop/SIBDS dsci/llm project/SIBDS research project (Jenni, Lilian)/mock_datasets/whas100_12.csv")
-group_1   <- data$agecat
-group_2   <- data$gender
-event     <- data$fstat
-time      <- data$lenfol
+df        <- read.csv("/Users/tongzj/Desktop/SIBDS dsci/llm project/Statistical Skill Set for Biomedical Research/mock_datasets/whas100_12.csv")
+group_1   <- df$agecat
+group_2   <- df$bmicat
+event     <- df$fstat
+time      <- df$lenfol
 threshold <- 0.05
 
 res                  <- lrt_test(group_1, group_2, event, time, threshold)
 lr_chisq             <- res$logrank["chisq"]
 lr_p                 <- res$logrank["p.value"]
-lr_df                <- 7
+lr_df                <- res$degrees_of_freedom
 survival_mean_CI     <- res$survival_mean_CI
 survival_quantile_CI <- res$survival_quantile_CI
 group_summary        <- res[[6]]
@@ -44,7 +44,7 @@ p_label <- if (lr_p < 0.001) {
 } else if (lr_p < 0.01) {
   "< 0.01 (&#42;&#42;)"
 } else if (lr_p < 0.05) {
-  paste0(round(lr_p, 4), " (&#42;)")
+  "< 0.05 (&#42;)"
 } else {
   as.character(round(lr_p, 4))
 }
@@ -56,22 +56,22 @@ decision <- if (lr_p < threshold) "Reject Null Hypothesis" else "Fail to Reject 
 
 ```{r hypothesis-summary, echo=FALSE, results='asis'}
 cat(paste0(
-  "**Null Hypothesis:** Survival curves are identical across all groups of agecat and gender.\n\n",
+  "**Null Hypothesis:** Survival curves are identical across all strata of agecat x bmicat.\n\n",
   "**Alternative Hypothesis:** At least one survival curve differs.\n\n",
   "| Statistic | Value |\n",
-  "|---|---|\n",
-  "| &chi;&sup2; statistic | ", round(lr_chisq, 2), " |\n",
+  "|:---|:---|\n",
+  "| Chi-square statistic | ", round(lr_chisq, 2), " |\n",
   "| Degrees of freedom | ", lr_df, " |\n",
   "| p-value | ", p_label, " |\n",
-  "| Decision | ", decision, " at &alpha; = ", threshold, " |\n\n"
+  "| Decision | **", decision, "** at alpha = ", threshold, " |\n\n"
 ))
 ```
 
 ## Background and Methods
 
-This survival analysis examines whether age category (`agecat`) and gender jointly affect time-to-event (`lenfol`, days from hospital admission to death), with death (`fstat = 1`) as the event of interest and administrative censoring (`fstat = 0`) indicating patients alive at the end of follow-up. The analysis includes 8 strata formed by crossing age category (4 levels: [32,60), [60,70), [70,80), [80,92]) &times; gender (Female = 0, Male = 1) across 100 patients. A **log-rank test with Bonferroni correction** was selected because two categorical covariates are present, producing more than two comparison groups. The three key assumptions are: (1) **Proportional Hazards** &mdash; the hazard ratio between any two groups remains constant over time; (2) **Non-Informative Censoring** &mdash; whether an observation is censored is unrelated to the underlying risk of the event; and (3) **Independent Observations** &mdash; each subject's survival time is independent of all others.
+The dataset contains 100 patients admitted with acute myocardial infarction, with follow-up time (`lenfol`, days) as the time-to-event variable and vital status (`fstat`: 1 = deceased, 0 = censored/alive at last contact) as the event indicator. The two categorical covariates are `agecat` (four age bands: [32,60), [60,70), [70,80), [80,92]) and `bmicat` (four BMI categories: [14.9,23.5), [23.5,27.2), [27.2,30.4), [30.4,39.9]), yielding 16 strata in total. A **log-rank test with Bonferroni correction** was selected because two categorical covariates are present, producing more than two comparison groups. The three key assumptions are: (1) **Proportional Hazards** -- the hazard ratio between any two groups remains constant over time; (2) **Non-Informative Censoring** -- whether an observation is censored is unrelated to the underlying risk of the event; and (3) **Independent Observations** -- each subject's survival time is independent of all others.
 
-The log-rank test yielded &chi;&sup2;(`r lr_df`) = `r round(lr_chisq, 2)`, p = `r p_label`. The decision is to **`r decision`** at significance level &alpha; = `r threshold`, indicating there is a statistically significant difference in survival across at least one of the 8 agecat &times; gender strata.
+The log-rank test yielded Chi-square(`r lr_df`) = `r round(lr_chisq, 2)`, p `r p_label`. The decision is to **`r decision`** at significance level alpha = `r threshold`, indicating there is a statistically significant difference in survival across at least one of the 16 `agecat` x `bmicat` strata.
 
 ## Quantile Table
 
@@ -87,27 +87,27 @@ qtbl <- data.frame(
   Events  = n_events$event_happened[match(
               gsub("group=", "", as.character(survival_quantile_CI$group)),
               paste0(n_events$group_1, ".", n_events$group_2))],
-  `Median (95% CI)` = paste0(
+  "Median (95% CI)" = paste0(
     ifelse(is.na(survival_quantile_CI$q50), "NR", round(survival_quantile_CI$q50, 2)),
     " (", ifelse(is.na(survival_quantile_CI$q50_lower), "NR", round(survival_quantile_CI$q50_lower, 2)),
-    "&ndash;", ifelse(is.na(survival_quantile_CI$q50_upper), "NR", round(survival_quantile_CI$q50_upper, 2)), ")"),
-  `Q25 (95% CI)` = paste0(
+    " - ", ifelse(is.na(survival_quantile_CI$q50_upper), "NR", round(survival_quantile_CI$q50_upper, 2)), ")"),
+  "Q25 (95% CI)" = paste0(
     ifelse(is.na(survival_quantile_CI$q25), "NR", round(survival_quantile_CI$q25, 2)),
     " (", ifelse(is.na(survival_quantile_CI$q25_lower), "NR", round(survival_quantile_CI$q25_lower, 2)),
-    "&ndash;", ifelse(is.na(survival_quantile_CI$q25_upper), "NR", round(survival_quantile_CI$q25_upper, 2)), ")"),
-  `Q75 (95% CI)` = paste0(
+    " - ", ifelse(is.na(survival_quantile_CI$q25_upper), "NR", round(survival_quantile_CI$q25_upper, 2)), ")"),
+  "Q75 (95% CI)" = paste0(
     ifelse(is.na(survival_quantile_CI$q75), "NR", round(survival_quantile_CI$q75, 2)),
     " (", ifelse(is.na(survival_quantile_CI$q75_lower), "NR", round(survival_quantile_CI$q75_lower, 2)),
-    "&ndash;", ifelse(is.na(survival_quantile_CI$q75_upper), "NR", round(survival_quantile_CI$q75_upper, 2)), ")"),
+    " - ", ifelse(is.na(survival_quantile_CI$q75_upper), "NR", round(survival_quantile_CI$q75_upper, 2)), ")"),
   check.names = FALSE
 )
 
 knitr::kable(qtbl, format = "html", escape = FALSE,
              caption = "Survival Quantiles with 95% Confidence Intervals") %>%
-  kableExtra::kable_styling(full_width = FALSE)
+  kableExtra::kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
 ```
 
-*NR = Not Reached. The survival estimate did not decline to the specified percentile during the follow-up period. NR in confidence interval bounds indicates the interval could not be estimated &mdash; too few events were observed for the survival curve to reach that quantile threshold within the follow-up period.*
+*NR = Not Reached. The survival estimate did not decline to the specified percentile during the follow-up period. NR in confidence interval bounds indicates the interval could not be estimated -- too few events were observed for the survival curve to reach that quantile threshold within the follow-up period.*
 
 ---
 
@@ -116,16 +116,16 @@ knitr::kable(qtbl, format = "html", escape = FALSE,
 ```{r mean-table, echo=FALSE}
 mtbl <- data.frame(
   Group           = gsub("group=", "", as.character(survival_mean_CI$group)),
-  `Mean Survival` = round(survival_mean_CI$rmean, 2),
+  "Mean Survival" = round(survival_mean_CI$rmean, 2),
   SE              = round(survival_mean_CI$se, 2),
-  `95% CI Lower`  = round(survival_mean_CI$lower_ci, 2),
-  `95% CI Upper`  = round(survival_mean_CI$upper_ci, 2),
+  "95% CI Lower"  = round(survival_mean_CI$lower_ci, 2),
+  "95% CI Upper"  = round(survival_mean_CI$upper_ci, 2),
   check.names = FALSE
 )
 
 knitr::kable(mtbl, format = "html", escape = FALSE,
              caption = "Restricted Mean Survival Time with 95% Confidence Intervals") %>%
-  kableExtra::kable_styling(full_width = FALSE)
+  kableExtra::kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
 ```
 
 *Mean survival is bounded by the largest observed event time in each group (restricted mean survival time).*
@@ -142,15 +142,15 @@ int_tbl <- dat_summary %>%
   dplyr::summarise(n = dplyr::n(), Events = sum(event), .groups = "drop")
 
 knitr::kable(int_tbl, format = "html", escape = FALSE,
-             caption = "Interaction Strata Summary (agecat &times; gender)") %>%
-  kableExtra::kable_styling(full_width = FALSE)
+             caption = "Interaction Strata Summary (agecat x bmicat)") %>%
+  kableExtra::kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
 ```
 
 ```{r sparse-warning, echo=FALSE, results='asis'}
 sparse <- int_tbl %>% filter(Events < 5)
 if (nrow(sparse) > 0) {
   for (s in sparse$strata) {
-    cat(paste0("**Warning:** Stratum **", s, "** has fewer than 5 events &mdash; results for this stratum should be interpreted cautiously.\n\n"))
+    cat(paste0("**Warning:** Stratum **", s, "** has fewer than 5 events -- results for this stratum should be interpreted cautiously.\n\n"))
   }
 }
 ```
@@ -167,18 +167,19 @@ fit_pairwise_obj <- survminer::pairwise_survdiff(
   p.adjust.method = "bonferroni"
 )
 pw_mat <- round(fit_pairwise_obj$p.value, 4)
-pw_mat[is.na(pw_mat)] <- "&mdash;"
+pw_mat[is.na(pw_mat)] <- "--"
 
 knitr::kable(pw_mat, format = "html", escape = FALSE,
              caption = "Pairwise Log-Rank p-values (Bonferroni-adjusted)") %>%
-  kableExtra::kable_styling(full_width = FALSE)
+  kableExtra::kable_styling(full_width = TRUE, bootstrap_options = c("striped", "hover"),
+                            font_size = 10)
 ```
 
 ---
 
 ## Kaplan-Meier Plot
 
-```{r km-plot, echo=FALSE, fig.width=10, fig.height=7}
+```{r km-plot, echo=FALSE, fig.width=10, fig.height=8}
 graph_lrt(group_1, group_2, event, time)
 ```
 
@@ -186,8 +187,8 @@ graph_lrt(group_1, group_2, event, time)
 
 ## Plain-Language Interpretation
 
-This analysis examined whether survival times differed across combinations of age group and gender among 100 patients in the WHAS100 dataset. The log-rank test with Bonferroni correction was statistically significant (&chi;&sup2;(7) = `r round(lr_chisq, 2)`, p = `r round(lr_p, 4)`), meaning the probability of observing differences this large by chance alone &mdash; if survival were truly identical across all groups &mdash; is approximately `r round(lr_p * 100, 1)`%. We therefore conclude that at least one group's survival experience differs meaningfully from the others.
+This analysis examined whether survival times differed across combinations of age group and BMI category among 100 patients in the WHAS100 dataset. The log-rank test with Bonferroni correction was statistically significant (Chi-square(`r lr_df`) = `r round(lr_chisq, 2)`, p `r p_label`), meaning the probability of observing differences this large by chance alone -- if survival were truly identical across all groups -- is very small. The p-value is the probability of observing a difference this large or larger by chance alone, assuming no true difference exists between the groups; a value this small provides strong evidence against identical survival curves.
 
-In practical terms, a clear age gradient is visible: younger patients (ages 32&ndash;70) survived substantially longer on average (restricted mean survival: ~1,579&ndash;2,309 days) compared to the oldest patients (ages 80&ndash;92, mean: ~1,234&ndash;1,262 days), regardless of gender. After Bonferroni correction, only the contrast between [80,92] Male and [32,60) Female reached statistical significance (adjusted p = 0.048). Statistical significance does not, however, imply clinical significance &mdash; the observed differences should be interpreted alongside clinical context.
+In practical terms, a clear age gradient is visible: patients in the oldest group ([80,92]) have substantially shorter survival regardless of BMI category, with median survival times ranging from approximately 114 to 451 days depending on BMI, compared to younger patients whose median survival was Not Reached in most subgroups -- meaning more than half of those patients were still alive at the end of follow-up. BMI alone does not appear to be a strong independent driver of survival once age is accounted for, as no individual pairwise comparison between strata survived Bonferroni correction. Statistical significance does not imply clinical significance -- the observed differences should be interpreted alongside clinical context.
 
-We are `r (1 - threshold) * 100`% confident that the true median (or mean) survival time for each group lies within the intervals shown in the tables above. Important caveats include: three strata ([60,70) Female, [60,70) Male, [70,80) Male) had fewer than 5 events, which reduces the reliability of pairwise comparisons for those groups; the wide confidence intervals in male strata with small samples reflect considerable uncertainty in those estimates; and the proportional hazards assumption underlying the log-rank test should be formally verified for a definitive assessment.
+We are `r (1 - threshold) * 100`% confident that the true median (or mean) survival time for each group lies within the intervals shown in the tables above. Important caveats include: several strata had fewer than 5 events, which reduces the reliability of pairwise comparisons for those groups; wide confidence intervals in sparse strata reflect considerable uncertainty; and the proportional hazards assumption should be formally verified for a definitive assessment.

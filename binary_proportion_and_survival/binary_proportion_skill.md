@@ -169,7 +169,7 @@ Replace each placeholder with its computed value. `<min_expected>` is a single r
 
 ### Brief
 
-2–3 sentences covering: test used(chi-square or Fisher's exact test with minimum expected cell value), key result (statistic + p-value (4 decimal places if ≥ 0.05, otherwise `< 0.05`, `< 0.01`, or `< 0.001` with stars)), and decision (reject / fail to reject null hypothesis),confidence interval of the binary proportion (calculated using function `confidence_int` stored as `confint`).
+2–3 sentences covering: test used(chi-square or Fisher's exact test with minimum expected cell value), key result (statistic + p-value (4 decimal places if ≥ 0.05, otherwise `< 0.05`, `< 0.01`, or `< 0.001` with stars)), and decision (reject / fail to reject null hypothesis),confidence interval of the binary proportion (stored as `confint` in the function `two_sample_proportion_test` output).
 
 No table displayed.
 ---

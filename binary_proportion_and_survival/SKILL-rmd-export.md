@@ -48,7 +48,7 @@ threshold <- 0.05   # replace if user specified a different level
 validate_inputs(n.tx, n.ctrl, resp.tx, resp.ctrl)
 
 test_type   <- choose_test(contingency)           # returns "chisq" or "fisher"
-test_result <- run_selected_test(contingency, test_type,n.tx, n.ctrl, resp.tx, resp.ctrl,threshold=0.05)   # requires both arguments
+test_result <- run_selected_test(contingency, test_type)   # requires both arguments
 confint <- confidence_int(n.tx, n.ctrl, resp.tx, resp.ctrl, threshold)
 interp      <- interpret_test(test_result$p_value, threshold)  # takes p_value, not the full result list
 ```
