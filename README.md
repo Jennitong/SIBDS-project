@@ -53,8 +53,19 @@ To use this Skill, users could explicitly ask Claude Code to 'use the binary_pro
   - "Event time"
   - "Survival probability"
 
+## Response Levels
 
-**Note to first time users** - this file will automatically install R in Claude and save results in a folder in local desktop. Please give permission for complete analysis result.
+There are three response levels for statistical analysis to help users with different statistical background.
+
+- Brief: reports only the test statistic, p-value, hypothesis testing decision, and a one-line outcome summary. Best suited for professionals and practitioners who are already familiar with the relevant statistical methods and need results, not explanations.
+
+- Moderate: includes everything in Brief, plus an explanation of the test assumptions and supporting tables where relevant. Best suited for users who have studied the relevant statistical concepts but are not deeply experienced with them in practice.
+
+- Detailed: includes everything in Moderate, plus full background on the statistical method, definitions of all key terms, and step-by-step interpretation. Best suited for users without a formal statistical background who need conceptual grounding alongside the results.
+
+Users could also ask questions regarding the response levels in Claude, or try all result levels.
+
+**Note to first time users** - this file will automatically install R in Claude and save results in a folder in local desktop. Users should give permission for complete analysis result.
 
 
 

@@ -173,9 +173,8 @@ A single cohesive paragraph in four parts:
 
 **note: Must obey the order of display**
 When the conditions in Steps 5–6 are met, show:
-5.  **Interaction Summary**
-6. **Pairwise Table**
-If conditions are not met, do not display 5 and 6.
+5. **Pairwise Table**
+If conditions are not met, do not display 5.
 ---
 
 ### Detailed Level
@@ -278,23 +277,6 @@ knitr::kable(mtbl, format = "html", escape = FALSE,
 ```
 
 Add a note below the table: **"Mean survival is bounded by the largest observed event time in each group (restricted mean survival time)."**
-
-### Interaction Summary (Two-Covariate Case Only)
-
-When `group2` is present, list all strata with sample size and event count:
-
-```r
-# dat was created inside lrt_test(); re-create it here for the summary
-dat_summary <- data.frame(group_1, group_2, event, time,
-                          strata = interaction(group_1, group_2))
-int_tbl <- dat_summary %>%
-  dplyr::group_by(strata) %>%
-  dplyr::summarise(n = dplyr::n(), Events = sum(event), .groups = "drop")
-
-knitr::kable(int_tbl, format = "html", escape = FALSE,
-             caption = "Interaction Strata Summary (group1 &times; group2)") %>%
-  kableExtra::kable_styling(full_width = FALSE)
-```
 
 Flag any stratum with fewer than 5 events with a note: **"Warning: stratum [X] has fewer than 5 events — results for this stratum should be interpreted cautiously."**
 

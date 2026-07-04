@@ -16,7 +16,7 @@ description: >
   and Independent Observations.
 ---
 
-**Highest order: Highest order: Display the Kaplan-Meier plot by rendering it via show_widget only after all text output (hypothesis test summary, tables) has been written. The show_widget call must be made strictly as the last action under Section 7 of the Output Specification, strictly after interaction table, or pairwise table when it is called. Never before. All other output must appear as plain markdown text in the chat response, not inside a widget. The plot should be the one rendered by R code `graph_lrt`, nothing else. **
+**Highest order: Highest order: Display the Kaplan-Meier plot by rendering it via show_widget only after all text output (hypothesis test summary, tables) has been written. The show_widget call must be made strictly as the last action under Section 8 of the Output Specification, strictly after pairwise table when it is called. Never before. All other output must appear as plain markdown text in the chat response, not inside a widget. The plot should be the one rendered by R code `graph_lrt`, nothing else. **
 
 - **note**: generate the graph inline using `svglite::svglite()`.
 
@@ -43,7 +43,7 @@ The skill accepts input in one of two forms:
 | `event` | binary (0/1) | Whether the event occurred (1) or was censored (0) |
 | `time` | numeric | Time to event or censoring |
 | `group1` | categorical | Primary grouping variable |
-| `group2` *(optional)* | categorical | Secondary grouping variable (triggers interaction analysis) |
+| `group2` *(optional)* | categorical | Secondary grouping variable |
 
 **Form B — Separate vectors:** Three (or four) individual vectors with identical length passed as arguments, in order: `event`, `time`, `group1`, and optionally `group2`.
 
@@ -117,21 +117,12 @@ Report per group:
 
 Present as a formatted separate table.
 
-### Step 5 — Number of Interactions (Two-Covariate Case Only)
-
-If `group2` is provided:
-- Report the **total number of strata** = levels(group1) × levels(group2)
-- List all strata combinations with their event counts and sample sizes
-- Note any empty or sparse cells (< 5 events) as a warning
-
-Present as a list (For each interaction, show counts).
-
-### Step 6 - Pairwise Table  Pairwise plot (if more than two levels of the single categorical variable OR two covariates, AND p value is less than the threshold)
+### Step 5 - Pairwise Table  Pairwise plot (if more than two levels of the single categorical variable OR two covariates, AND p value is less than the threshold)
 Make sure that the p value indicates significant result, then refer to the appropriate R code and `fit_pairwise`
 
 Present as a formatted table (pairwise p value table for levels or interactions)
 
-### Step 7 — Kaplan-Meier Plot
+### Step 6 — Kaplan-Meier Plot
 
 **Note: show the plot directly inline following the correct order**
 
@@ -146,7 +137,7 @@ Required plot elements, as specified in the code:
 - Ticks for censored marks
 - Annotate with p-value from log-rank test on the plot
 
-## Step 8 — Ask for Detail Level and Export Preference
+## Step 7 — Ask for Detail Level and Export Preference
 
 Ask for the response level using the exact wording as below:
 
@@ -157,7 +148,7 @@ Output **exactly** the above sentence — nothing before it, nothing after excep
 **note: Assuming these vector inputs are correct, do not ask for confirmation.**
 ---
 
-## Step 9 — Output
+## Step 8 — Output
 
 **Tone for all levels:** Professional but accessible. Write for a stakeholder who understands "statistically significant" but does not need to verify the math. Define p-value briefly inline for people who chose "detailed response" as "the probability of observing a difference this large (or larger) by chance alone if there were truly no effect." Also explicitly state what the null hypothesis refers to in "moderate" and "detailed" response chosers. Never show the R code in output.
 
@@ -173,12 +164,12 @@ No table displayed.
 
 A single cohesive paragraph covering all four elements in order:
 
-1. **Background** — censoring event, time to event, levels in the group or interactions
+1. **Background** — censoring event, time to event, levels in the group or interactions.
 2. **Test chosen and assumptions** — test name, why it was selected (proportional hazard assumption), other key assumptions met.
 3. **Test result** — test statistic (X²), degrees of freedom, p-value (4 decimal places if ≥ 0.05, otherwise `< 0.05`, `< 0.01`, or `< 0.001` with stars), and confidence interval and quantiles as **Quantile Table**, mean survival and confidence interval as **Mean Survival Table**, Kaplan-Meier curve as **Kaplan-Meier Plot**.
 4. **Decision** — reject or fail to reject null hypothesis, and what that means in plain language.
 
-Return **Interaction Summary** and **Pairwise Table** only when needed and conditions met.
+Return **Pairwise Table** only when needed and conditions met.
 ---
 
 ### Detailed
@@ -223,10 +214,6 @@ If there are NR in the table, output the exact sentence beneath the quantile tab
 ###  Mean Survival Table
 One row per group/strata. Columns: Group | Mean Survival | SE | 95% CI Lower | 95% CI Upper
 
-
-###  Interaction Summary *(only if two covariates)*
-List of all strata (group1 × group2 combinations) with n, events, and any sparsity warnings.
-
 ### Pairwise Table *(only if more than two levels of the single categorical variablee OR two covariates, AND p value is less than the threshold)*
 Pairwise table for p values among groups or interactions.
 
@@ -248,7 +235,6 @@ DO NOT shade confidence intervals in the plot. The margin should only contain th
 | All observations censored (event = 0) | Abort with error: "No events observed — survival analysis not possible." |
 | A group has 0 events | Warn: "Group [X] has no events; quantiles/median will be undefined." |
 | Tied event times | Handled automatically by `survfit` (Efron method by default) |
-| Empty interaction cell | Warn: "Strata [X × Y] has no observations." |
 | Single group (no covariate levels > 1) | Skip log-rank test; report KM curve and summary only |
 | NAs in any column | Warn and apply listwise deletion; report number of rows removed |
 
