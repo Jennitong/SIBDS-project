@@ -76,13 +76,12 @@ graph_lrt <- function(group_1, group_2, event, time) {
     scales::hue_pal()(length(g2_levels)), g2_levels)
   lty_choices <- c("solid", "dashed", "dotted", "dotdash", "longdash", "twodash")
   group_1_ltys <- setNames(
-    lty_choices[seq_along(g1_levels)], g1_levels)
+    lty_choices[((seq_along(g1_levels) - 1) %% length(lty_choices)) + 1], g1_levels)
   
-  strata_cols <- setNames(
-    sapply(strata_labels, function(s) group_2_colors[strsplit(s, "\\.")[[1]][2]]), strata_labels)
-  strata_ltys <- setNames(
-    sapply(strata_labels, function(s) group_1_ltys[strsplit(s, "\\.")[[1]][1]]), strata_labels)
-
+  strata_grid <- expand.grid(g1 = g1_levels, g2 = g2_levels, stringsAsFactors = FALSE)
+  strata_cols <- setNames(group_2_colors[strata_grid$g2], strata_labels)
+  strata_ltys <- setNames(group_1_ltys[strata_grid$g1], strata_labels)
+  
   ggsurvfit(fit, linetype_aes = TRUE) +
     add_censor_mark() +
     add_pvalue(

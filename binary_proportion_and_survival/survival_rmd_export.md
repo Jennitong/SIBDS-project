@@ -59,7 +59,7 @@ library(kableExtra)
 **Single-group version:**
 
 ```r
-# Replace vectors below with the actual data used in chat
+# Replace vectors below with the actual data used in chat. Vector must be the labeled version already confirmed with the client earlier (e.g. Female/Male), not the raw numeric codes (e.g. 0/1)
 groups    <- <groups_vector>
 event     <- <event_vector>
 time      <- <time_vector>

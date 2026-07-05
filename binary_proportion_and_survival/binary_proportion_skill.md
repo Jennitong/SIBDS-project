@@ -156,6 +156,8 @@ Output **exactly** the following block — nothing before it, nothing after exce
 
 Replace each placeholder with its computed value. `<min_expected>` is a single rounded number (no formula, no table). The user can answer both questions at once (e.g., "detailed, and yes please export to HTML"). Wait for the user's answer before generating any output.
 
+**Note**: Ignore any detail-level preference (brief/moderate/detailed) that arrives together with the initial data — always output the Step 6 question and wait for a reply in the next turn, even if one was mentioned upfront.
+
 ---
 
 ## Step 7 — Output

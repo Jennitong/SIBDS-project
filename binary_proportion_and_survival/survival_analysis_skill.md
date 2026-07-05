@@ -55,6 +55,9 @@ The skill accepts input in one of two forms:
 - Each level of `group1` (and `group2` if present) has at least one event
 
 If there are over 4 variables, let the user specify which two groups should be used as the two categorical variables.
+
+**Note for lebelling**: "If group1 (or group2) has exactly two unique values that are not already self-descriptive (e.g., numeric codes like 0/1, 1/2, TRUE/FALSE), ask the client which value corresponds to which label before proceeding. Skip this if the values are already descriptive strings (e.g., 'Male'/'Female')." Give it exact question wording, e.g. "I see [group1] is coded as 0/1 — which value corresponds to which group (e.g., 0 = female, 1 = male)?"
+
 ---
 
 ## Analysis Steps
@@ -64,12 +67,15 @@ If there are over 4 variables, let the user specify which two groups should be u
 When there is only one categorical group variable, refer to 'scripts/survival_single_groups.R'
 From the skill's directory (the folder containing this `survival_analysis_skill.md`), run:
 
+
 ```bash
 cd "<path-to-skill-directory>" && Rscript -e "
 source('scripts/survival_single_groups.R')
 lrt_test <- function(groups = <groups>, event = <event>, time = <time>, threshold)
 "
 ```
+For `lrt_test`, build factor(e.g. <groups>, levels = c(0,1), labels = c("Female","Male")) (using whatever mapping the client gave) and substitute that in place of <groups> in the Rscript call, so following tables and plots and any derscription will use the labelling that the client provided, not the raw numbers. 
+
 
 When there are two categorical groups variable, refer to 'scripts/two_groups_combined.R'
 From the skill's directory (the folder containing this `survival_analysis_skill.md`), run:
@@ -146,6 +152,9 @@ Ask for the response level using the exact wording as below:
 Output **exactly** the above sentence — nothing before it, nothing after except waiting for the user's reply. Do not show formulas, intermediate tables, or any other text.
 
 **note: Assuming these vector inputs are correct, do not ask for confirmation.**
+
+Currently echoes raw values like "categorical group = <group1>". Update this template to show the client-given labels instead of raw codes once they've been provided.
+ 
 ---
 
 ## Step 8 — Output
@@ -211,11 +220,17 @@ For **two categorical dataset** only, refer to the `two_groups_combined.R` file 
 
 If there are NR in the table, output the exact sentence beneath the quantile table: **NR = Not Reached. The survival estimate did not decline to the specified percentile during the follow-up period.**
 
+"Group" column and plot legend must show the client-provided labels, and that Claude should strip any groups= prefix R's rownames()/summary() output adds (e.g., "groups=Female" → "Female").
+
 ###  Mean Survival Table
 One row per group/strata. Columns: Group | Mean Survival | SE | 95% CI Lower | 95% CI Upper
 
+"Group" column and plot legend must show the client-provided labels, and that Claude should strip any groups= prefix R's rownames()/summary() output adds (e.g., "groups=Female" → "Female").
+
 ### Pairwise Table *(only if more than two levels of the single categorical variablee OR two covariates, AND p value is less than the threshold)*
 Pairwise table for p values among groups or interactions.
+
+"Group" column and plot legend must show the client-provided labels, and that Claude should strip any groups= prefix R's rownames()/summary() output adds (e.g., "groups=Female" → "Female").
 
 ### Kaplan-Meier Plot
 **The plot must be rendered under the Kaplan-Meier Plot in the order as specified. Must be in line in correct order, not else where.**
@@ -223,6 +238,8 @@ Rendered inline in the window directly, so the user could see without the need o
 Must be displayed explicitly. show the exact plot rendered using R code.
 
 DO NOT shade confidence intervals in the plot. The margin should only contain the groups and color/linetype used, as rendered using R code. Nothing else.
+
+"Group" column and plot legend must show the client-provided labels, and that Claude should strip any groups= prefix R's rownames()/summary() output adds (e.g., "groups=Female" → "Female").
 
 **note: do not add additional notation section**
 
