@@ -33,7 +33,7 @@ To use our SKILL.md statistical assistant:
 
 To use this SKILL.md, users can explicitly ask Claude Code to 'use the binary_proportion_and_survival skill to conduct the analysis'. Otherwise, users can trigger tasks through task-specific phrases.
 
-For binary hypothesis testing (via Chi-square or Fisher's Exact test), provide four numeric inputs representing patient group sizes and success/response counts. Then, enter any of the following phrases or similar phrases:
+For **binary hypothesis testing** (via Chi-square or Fisher's Exact test), provide four numeric inputs representing patient group sizes and success/response counts. Then, enter any of the following phrases or similar phrases:
 
   - "Did the treatment work"
   - "Compare two groups"
@@ -42,7 +42,7 @@ For binary hypothesis testing (via Chi-square or Fisher's Exact test), provide f
   - "Summary statistics"
   - "I have a study with X patients in the treatment arm, X patients in the control arm, X responders in the treatment group, and X responders in the control group"
 
-For survival analysis that compares between and within covariates, provide a dataset that contains the event, timeframes, and covariates. Then, enter any of the following phrases or similar phrases:
+For **survival analysis** that compares between and within covariates, provide a dataset that contains the event, timeframes, and covariates. Then, enter any of the following phrases or similar phrases:
 
   - "Survival analysis"
   - "Kaplan-Meier"
@@ -57,11 +57,11 @@ For survival analysis that compares between and within covariates, provide a dat
 
 Our SKILL.md provides three output options of differing levels of detail to best meet varying statistical and clinical needs. The options are as follows:
 
-- Brief: reports only the test statistic, p-value, hypothesis testing decision, and a one-line outcome summary. Best suited for professionals and practitioners who are already familiar with the relevant statistical methods and need results, not explanations.
+- **Brief**: reports only the test statistic, p-value, hypothesis testing decision, and a one-line outcome summary. Best suited for professionals and practitioners who are already familiar with the relevant statistical methods and need results, not explanations.
 
-- Moderate: includes everything in Brief, along with an explanation of the test assumptions and supporting tables where relevant. Best suited for users who have studied the relevant statistical concepts but are not deeply experienced with them in practice.
+- **Moderate**: includes everything in Brief, along with an explanation of the test assumptions and supporting tables where relevant. Best suited for users who have studied the relevant statistical concepts but are not deeply experienced with them in practice.
 
-- Detailed: includes everything in Moderate, plus a comprehensive summary on the statistical method, definitions of all key terms, and step-by-step interpretations. Best suited for users without a formal statistical background who need conceptual grounding alongside the results.
+- **Detailed**: includes everything in Moderate, plus a comprehensive summary on the statistical method, definitions of all key terms, and step-by-step interpretations. Best suited for users without a formal statistical background who need conceptual grounding alongside the results.
 
 Users can also ask questions regarding the output options in Claude, or try all options for themselves.
 
