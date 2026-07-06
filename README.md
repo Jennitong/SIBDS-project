@@ -31,7 +31,7 @@ To use our SKILL.md statistical assistant:
 
 ### Triggering Words
 
-To use this SKILL.md, users can explicitly ask Claude Code to 'use the binary_proportion_and_survival skill to conduct the analysis'. Otherwise, users can trigger tasks through task-specific phrases.
+To use this SKILL.md, users can explicitly ask Claude Code to use the `binary_proportion_and_survival` skill to conduct the analysis. Otherwise, users can trigger tasks through task-specific phrases.
 
 For **binary hypothesis testing** (via Chi-square or Fisher's Exact test), provide four numeric inputs representing patient group sizes and success/response counts. Then, enter any of the following phrases or similar phrases:
 
