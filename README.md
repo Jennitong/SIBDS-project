@@ -65,7 +65,7 @@ Our SKILL.md provides three output options of differing levels of detail to best
 
 Users can also ask questions regarding the output options in Claude, or try all options for themselves.
 
-**Note to first time users** - this file will automatically install R in Claude and save results in a folder in the local desktop.
+**Note for first time users**: this file will automatically install R in Claude and save results in a folder in the local desktop.
 
 
 
