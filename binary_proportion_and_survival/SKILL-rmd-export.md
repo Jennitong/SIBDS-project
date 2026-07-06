@@ -93,9 +93,13 @@ Reproduce the exact wording already shown to the user in the chat; do not rephra
 | bullet / • | • | `&#8226;` |
 | asterisk / * | * | `&#42;` |
 
-"Apply UTF-8 characters directly in Markdown prose. Use HTML entities only inside HTML tags or paste()/sprintf() chunks with results='asis'."
+"Apply UTF-8 characters directly in Markdown prose. Use HTML entities only inside raw HTML tags or paste()/sprintf() chunks with results='asis'.
+
+**Code span exception:** Never place HTML entities inside single-backtick inline code (`...`) or fenced code blocks — these render their contents as literal text, so `&sup2;` and `&#42;` display verbatim instead of decoding to ² and *. Any backtick-quoted line (e.g., the one-line `Test: ...` summary) must use raw Unicode characters (X², *, α) directly instead of entities."
 
 **Asterisk / p-value stars rule:** The `interp$p_level` string returned by `interpret_test()` may contain `*`, `**`, or `***` inside parentheses (e.g. `"less than 0.001 (***)"``). When rendered inside a bold Markdown span (`**...**`), these asterisks are consumed by the Markdown parser, collapsing `(***)` to `()`. Always escape them with `gsub()` before inline use:
+
+This `gsub()` substitution applies only when `interp$p_level` is placed inside a bold span (`**...**`) or plain prose. Do not apply it — and do not use entities at all — when the value is placed inside single backticks; leave the raw asterisks there since code spans are never Markdown- or entity-processed.
 
 ```r
 `r gsub("\\*", "&#42;", interp$p_level)`
@@ -105,7 +109,7 @@ Use this form everywhere `interp$p_level` appears inline in the `.Rmd`.
 
 ### Bar Plot
 
-The text for the percentages should be **black**, do not scale the bars.
+The text for the percentages should be **black**, scale each bar's length proportionally to its response rate (e.g. length: <percentage>%) so bar length visually encodes the rate.
 
 ```{r, echo=FALSE, results='asis'}
 treat_pct <- round(resp.tx  / n.tx   * 100, 2)

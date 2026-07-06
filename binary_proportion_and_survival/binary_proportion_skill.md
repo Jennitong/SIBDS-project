@@ -77,7 +77,7 @@ Build a 2×2 contingency table and inline barplot from the four inputs. Show the
 
 **bar plot**
 
-Display the response rates as a side-by-side horizontal bar chart rendered directly in the chat window using an inline HTML/SVG widget. Show Treatment (`<resp.tr>/<.tr>`%) and Control (`<resp.ctrl>/<n.ctrl>`%) as styled bars with percentage labels inside each bar, a title 'RESPONSE RATES', and use a blue bar for Treatment and a gray bar for Control. Make it visually polished with clean typography and rounded bars. The percentages should be written in **black** color, and do not scale the bars.
+Display the response rates as a side-by-side horizontal bar chart rendered directly in the chat window using an inline HTML/SVG widget. Show Treatment (`<resp.tr>/<.tr>`%) and Control (`<resp.ctrl>/<n.ctrl>`%) as styled bars with percentage labels inside each bar, a title 'RESPONSE RATES', and use a blue bar for Treatment and a gray bar for Control. Make it visually polished with clean typography and rounded bars. The percentages should be written in **black** color, scale each bar's length proportionally to its response rate (e.g. length: <percentage>%) so bar length visually encodes the rate.
 
 extract `<resp.tr>/<.tr>` and `<resp.ctrl>/<n.ctrl>` from the prompt, and round to two decimal places for display.
 
@@ -231,6 +231,7 @@ One line:
 
 `Test: [Chi-square / Fisher's exact] | Statistic: X² = … (df = 1) or Odds Ratio = … | p-value = … | α = 0.05`
 
+**Rmd export note:** This is a Markdown inline code span (single backticks). When reproducing it in the exported `.Rmd`/HTML report, keep the raw Unicode symbols (X², *, α) inside the backticks exactly as shown here — do not run the HTML-entity substitution from `SKILL-rmd-export.md` on this line, since code spans render literally and entities will not decode.
 ---
 
 ### Notation
