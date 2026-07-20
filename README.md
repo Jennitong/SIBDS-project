@@ -76,13 +76,13 @@ Follow these steps to install our SKILL.md statistical assistant:
 
 To use our SKILL.md statistical assistant:
 
-1. Inside the specific project, enter your clinical scenario and relevant dataset if needed in the empty chatbox.
+1. Inside the specific project, enter your clinical scenario and relevant dataset if needed in the empty chatbox that says "New chat in [project name]".
 
 2. Choose whether you would prefer a brief, moderate, or detailed response.
 
 3. After the test runs, select if you would like the results exported as an R Markdown (.Rmd) and/or rendered HTML file.
 
-**Note: to use specific skills, be sure to write prompts under the relevant project. You could double click the project's name and ask questions in the project's chatbox.**
+**Note: to use any specific skill, be sure to write prompts under the relevant project. You could click on the project's name and ask questions in the project's chatbox.**
 
 
 # Codex
