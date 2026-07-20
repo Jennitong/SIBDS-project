@@ -1,5 +1,9 @@
-# SIBDS-project
-This SKILL.md statistical assistant was developed for the SIBDS 2026 research project, focusing on LLM, R code, and SKILL.md. The `binary_proportion_and_survival.zip` file aims to assist clinicians and researchers with conducting binary hypothesis tests and survival analyses between differing patient groups.
+Statistical Assistant SKILL.md
+
+This project provides SKILL.md files for Claude, ChatGPT, and Codex, enabling users to perform the same statistical analyses regardless of their preferred AI platform. Each SKILL.md file is designed to guide the AI agent in conducting two statistical hypothesis tests: the two-proportion test and survival analysis. The analysis output is consistent, with numeric values generated using codes. As the installation procedures and usage differ between platforms, detailed instructions for each are provided in the following sections.
+
+
+# Claude
 
 ## Installation
 
@@ -53,7 +57,62 @@ For **survival analysis** that compares between and within covariates, provide a
   - "Event time"
   - "Survival probability"
 
-## Output option hierarchy
+
+# ChatGPT
+
+## Installation
+
+Follow these steps to install our SKILL.md statistical assistant:
+
+1. Download the `chatgpt_knowledge` folder from GitHub.
+
+2. Open the ChatGPT webpage and click on `Project` buttom on the left.
+
+3. Click on `New` and give a project name, then `Create project`.
+
+4. Under `Sources`, click on `Add sources`, then drag or upload the entire `chatgpt_knowledge` folder. All nine files contained in the folder will be uploaded automatically.
+
+## Usage
+
+To use our SKILL.md statistical assistant:
+
+1. Inside the specific project, enter your clinical scenario and relevant dataset if needed in the empty chatbox.
+
+2. Choose whether you would prefer a brief, moderate, or detailed response.
+
+3. After the test runs, select if you would like the results exported as an R Markdown (.Rmd) and/or rendered HTML file.
+
+**Note: to use specific skills, be sure to write prompts under the relevant project. You could double click the project's name and ask questions in the project's chatbox.**
+
+
+# Codex
+
+## Installation
+
+Follow these steps to install our SKILL.md statistical assistant:
+
+1. Download the `codex_statistical_analysis` folder from GitHub.
+
+2. Download Codex Desktop App.
+
+3. Open the Codex App and click on the plus sign next to `Project`.
+
+4. Click on `Use an existing folder`, and find the local `codex_statistical_analysis` folder. The project will be named `codex_statistical_analysis` automatically.
+
+## Usage
+
+To use our SKILL.md statistical assistant:
+
+1. Inside the specific project, enter your clinical scenario and relevant dataset if needed in the empty chatbox.
+
+2. Choose whether you would prefer a brief, moderate, or detailed response.
+
+3. After the test runs, select if you would like the results exported as an R Markdown (.Rmd) and/or rendered HTML file.
+
+**Note: to use specific skills, be sure to write prompts under the relevant project. You could double click the project's name `codex_statistical_analysis` and Codex will direct you to a new chat under this project.**
+
+
+# Output option hierarchy
 
 Our SKILL.md provides three output options of differing levels of detail to best meet varying statistical and clinical needs. The options are as follows:
 
