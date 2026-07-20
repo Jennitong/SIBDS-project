@@ -97,7 +97,7 @@ Follow these steps to install our SKILL.md statistical assistant:
 
 3. Open the Codex App and click on the plus sign next to `Project`.
 
-4. Click on `Use an existing folder`, and find the `codex_statistical_analysis` folder that has been downloaded and saved locally. The project will be named `codex_statistical_analysis` automatically.
+4. Click on `Use an existing folder`, and find the `codex_statistical_analysis` folder that has been downloaded and saved locally in your laptop. The project will be named `codex_statistical_analysis` automatically.
 
 ## Usage
 
