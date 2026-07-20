@@ -76,7 +76,7 @@ Follow these steps to install our SKILL.md statistical assistant:
 
 To use our SKILL.md statistical assistant:
 
-1. Inside the specific project, enter your clinical scenario and relevant dataset if needed in the empty chatbox that says "New chat in [project name]".
+1. Inside the specific project, enter your clinical scenario and relevant dataset if needed in the empty chatbox that says "New chat in [project name that you created]".
 
 2. Choose whether you would prefer a brief, moderate, or detailed response.
 
