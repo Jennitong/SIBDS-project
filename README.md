@@ -25,7 +25,7 @@ To use our SKILL.md statistical assistant:
 
 1. Choose the `Code` option.
 
-2. Enter your clinical scenario, including the total number of patients and the number of patients who received an outcome in each arm, with the **triggering words**.
+2. Enter your clinical scenario or question with the **triggering words**, and any relevant dataset.
 
 3. If prompted, allow Claude to run or install any packages.
 
@@ -76,7 +76,7 @@ Follow these steps to install our SKILL.md statistical assistant:
 
 To use our SKILL.md statistical assistant:
 
-1. Inside the specific project, enter your clinical scenario and relevant dataset if needed in the empty chatbox that says "New chat in [project name that you created]".
+1. Inside the specific project, enter your clinical scenario and relevant dataset if needed in the empty chatbox that says *"New chat in [project name that you created]"*.
 
 2. Choose whether you would prefer a brief, moderate, or detailed response.
 
@@ -122,7 +122,7 @@ Our SKILL.md provides three output options of differing levels of detail to best
 
 - **Detailed**: includes everything in Moderate, plus a comprehensive summary on the statistical method, definitions of all key terms, and step-by-step interpretations. Best suited for users without a formal statistical background who need conceptual grounding alongside the results.
 
-Users can also ask questions regarding the output options in Claude, or try all options for themselves.
+Users can also ask questions regarding the output options in Claude, ChatGPT and Codex, or try all options for themselves.
 
 **Note for first time users**: this file will automatically install R in Claude and save results in a folder in the local desktop.
 
