@@ -1,4 +1,4 @@
-Statistical Assistant SKILL.md
+**Statistical Assistant SKILL.md**
 
 This project provides SKILL.md files for Claude, ChatGPT, and Codex, enabling users to perform the same statistical analyses regardless of their preferred AI platform. Each SKILL.md file is designed to guide the AI agent in conducting two statistical hypothesis tests: the two-proportion test and survival analysis. The analysis output is consistent, with numeric values generated using codes. As the installation procedures and usage differ between platforms, detailed instructions for each are provided in the following sections.
 
