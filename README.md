@@ -9,11 +9,11 @@ This project provides SKILL.md files for Claude, ChatGPT, and Codex, enabling us
 
 Follow these steps to install our SKILL.md statistical assistant:
 
-1. Download the `binary_proportion_and_survival.zip.`
+1. Download the `binary_proportion_and_survival.zip`.
 
-2. Go to claude.com and open the sidebar.
+2. Go to claude.com or Claude's desktop app and open the sidebar.
 
-3. Select 'Customize'.
+3. Select `Customize`.
 
 4. Under the 'Skills' tab, select 'Add' and then 'Upload a skill.'
 
@@ -23,7 +23,7 @@ Follow these steps to install our SKILL.md statistical assistant:
 
 To use our SKILL.md statistical assistant:
 
-1. Choose the 'Code' option.
+1. Choose the `Code` option.
 
 2. Enter your clinical scenario, including the total number of patients and the number of patients who received an outcome in each arm, with the **triggering words**.
 
