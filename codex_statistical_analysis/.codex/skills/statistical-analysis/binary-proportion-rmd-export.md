@@ -248,7 +248,7 @@ next only if the previous fails.
 if (!requireNamespace("markdown", quietly = TRUE)) install.packages("markdown")
 knitr::knit("report.Rmd", output = "report.md")   # knit .Rmd -> .md
 markdown::markdownToHTML("report.md", output = "report.html",
-                         options = c("use_xhtml", "smartypants", "toc"),
+                         options = c("use_xhtml", "smartypants"),
                          fragment.only = FALSE)
 ```
 
@@ -258,7 +258,11 @@ package renders standard Markdown links `[text](url)` as clickable
 `<a href="url">` tags by default -- no extra options are required for link
 support. Do **not** pass `"skip_html"` in the options list, as that would
 suppress raw HTML tags (including any `<a>` tags you write inline, and the
-`<img>` tag used for the bar chart).
+`<img>` tag used for the bar chart). Do **not** pass `"toc"` either -- the
+`markdown` package doesn't resolve it against this document's headers, so
+instead of a working table of contents it leaves a raw, unstyled
+`<toc id="...">...</toc>` list box at the top of the page. Do not add
+`toc: true` / `toc_float: true` to the YAML header for the same reason.
 
 **Step 2 -- rmarkdown render (if Pandoc is available)**
 

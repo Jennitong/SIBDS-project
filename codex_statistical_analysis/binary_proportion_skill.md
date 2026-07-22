@@ -246,7 +246,7 @@ Throughout the analysis, use `*` only for p-value's.Do not use other symbol.
 
 After output has been printed out in the Claude window, lastly ask 
 
-> Would you also like the results exported as an **R Markdown (.Rmd) and rendered HTML file**?
+> Would you also like this analysis exported as an **R Markdown (.Rmd) and rendered HTML report**?
 
 **If the user said yes to export:** follow the instructions in `SKILL-rmd-export.md` (located in the same folder as this skill file) to generate the `.Rmd` and render the `.html`. The exported files must contain **exactly the same content** already shown in Step 7 — same detail level, no new analysis, no rephrasing. All three detail levels (brief, moderate, detailed) are supported for export.
 

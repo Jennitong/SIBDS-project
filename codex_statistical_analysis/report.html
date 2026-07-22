@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="generator" content="litedown 0.9">
+<title>Two-Sample Proportion Test Report</title>
+<style type="text/css">
+body {
+  font-family: sans-serif;
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 1.5;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+body, .abstract, code, .footnotes, footer, #refs, .caption { font-size: .9em; }
+li li { font-size: .95em; }
+ul:has(li > input[type="checkbox"]) { list-style: none; padding-left: 1em; }
+*, :before, :after { box-sizing: border-box; }
+a { color: steelblue; }
+pre, img { max-width: 100%; }
+pre { white-space: pre-wrap; word-break: break-word; }
+pre code { display: block; padding: 1em; overflow-x: auto; }
+code { font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace; }
+:not(pre, th) > code, code[class], div > .caption { background: #f8f8f8; }
+pre > code:is(:not([class]), .language-plain, .language-none, .plain), .box, .figure, .table { background: inherit; border: 1px solid #eee; }
+pre > code {
+  &.message { border-color: #9eeaf9; }
+  &.warning { background: #fff3cd; border-color: #fff3cd; }
+  &.error { background: #f8d7da; border-color: #f8d7da; }
+}
+.fenced-chunk { border-left: 1px solid #666; }
+.code-fence {
+  opacity: .4;
+  border: 1px dashed #666;
+  border-left: 2px solid;
+  &:hover { opacity: inherit; }
+}
+.box, .figure, .table, table { margin: 1em auto; }
+div > .caption { padding: 1px 1em; }
+.figure { p:has(img, svg), pre:has(svg) { text-align: center; } }
+.flex-col { display: flex; justify-content: space-between; }
+table {
+  &:only-child:not(.table > *) { margin: auto; }
+  th, td { padding: 5px; font-variant-numeric: tabular-nums; }
+  thead, tfoot, tr:nth-child(even) { background: whitesmoke; }
+  thead th { border-bottom: 1px solid #ddd; }
+  &:not(.datatable-table) {
+    border-top: 1px solid #666;
+    border-bottom: 1px solid #666;
+  }
+}
+blockquote {
+  color: #666;
+  margin: 0;
+  padding: 1px 1em;
+  border-left: .5em solid #eee;
+}
+hr, .footnotes::before { border: 1px dashed #ddd; }
+.frontmatter { text-align: center; }
+#TOC {
+  a { text-decoration: none; }
+  ul { list-style: none; padding-left: 1em; }
+  & > ul { padding: 0; }
+  ul ul { border-left: 1px solid lightsteelblue; }
+}
+.body h2 { border-bottom: 1px solid #666; }
+.body .appendix, .appendix ~ h2 { border-bottom-style: dashed; }
+.main-number::after { content: "."; }
+span[class^="ref-number-"] { font-weight: bold; }
+.ref-number-fig::after, .ref-number-tab::after { content: ":"; }
+.cross-ref-chp::before { content: "Chapter "; }
+.cross-ref-sec::before { content: "Section "; }
+.cross-ref-fig::before, .ref-number-fig::before { content: "Figure "; }
+.cross-ref-tab::before, .ref-number-tab::before { content: "Table "; }
+.cross-ref-eqn::before, .MathJax_ref:has(mjx-mtext > mjx-c + mjx-c)::before { content: "Equation "; }
+.abstract, #refs {
+  &::before { display: block; margin: 1em auto; font-weight: bold; }
+}
+.abstract::before { content: "Abstract"; text-align: center; }
+#refs::before { content: "Bibliography"; font-size: 1.5em; }
+.ref-paren-open::before { content: "("; }
+.ref-paren-close::after { content: ")"; }
+.ref-semicolon::after { content: "; "; }
+.ref-and::after { content: " and "; }
+.ref-et-al::after { content: " et al."; font-style: italic; }
+.footnote-ref a {
+  &::before { content: "["; }
+  &::after { content: "]"; }
+}
+section.footnotes {
+  margin-top: 2em;
+  &::before { content: ""; display: block; max-width: 20em; }
+}
+.fade {
+  background: repeating-linear-gradient(135deg, white, white 30px, #ddd 32px, #ddd 32px);
+  opacity: 0.6;
+}
+
+@media print {
+  body { max-width: 100%; }
+  tr, img { break-inside: avoid; }
+}
+@media only screen and (min-width: 992px) {
+  body:not(.pagesjs) pre:has(.line-numbers):not(:hover) { white-space: pre; }
+}
+</style>
+</head>
+<body>
+<div class="frontmatter">
+<div class="title"><h1>Two-Sample Proportion Test Report</h1></div>
+<div class="date"><h3>2026-07-22</h3></div>
+</div>
+<div class="body">
+<p>The treatment group included 2,300 patients, of whom 1,225 responded (53.26%; 95% CI 51.20%–55.32%). The control group included 45,600 patients, of whom 34,500 responded (75.66%; 95% CI 75.26%–76.05%). The null hypothesis was that the two groups have equal response probabilities; the alternative was that they differ. Because every expected cell count exceeded 5 (minimum 584.60), a chi-square test was appropriate, assuming independent groups and a binary outcome. The result was X² = 579.3856 (df = 1), p &lt; 0.001 (***), so we reject the null hypothesis. Receiving treatment or not is associated with the response.</p>
+<h3 id="sec:contingency-table">Contingency table</h3>
+<table>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Group </th>
+   <th style="text-align:right;"> Response </th>
+   <th style="text-align:right;"> No response </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Treatment </td>
+   <td style="text-align:right;"> 1225 </td>
+   <td style="text-align:right;"> 1075 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Control </td>
+   <td style="text-align:right;"> 34500 </td>
+   <td style="text-align:right;"> 11100 </td>
+  </tr>
+</tbody>
+</table>
+<h3 id="sec:response-rates">Response rates</h3>
+<img src="response_rates.png" alt="Response-rate comparison" style="max-width:600px;">
+<h3 id="sec:summary">Summary</h3>
+<table>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Metric </th>
+   <th style="text-align:right;"> Treatment </th>
+   <th style="text-align:right;"> Control </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Total </td>
+   <td style="text-align:right;"> 2,300 </td>
+   <td style="text-align:right;"> 45,600 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Response rate </td>
+   <td style="text-align:right;"> 53.26% (95% CI 51.20%&ndash;55.32%) </td>
+   <td style="text-align:right;"> 75.66% (95% CI 75.26%&ndash;76.05%) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Risk difference </td>
+   <td style="text-align:right;"> Absolute difference: 22.40 percentage points </td>
+   <td style="text-align:right;"> Treatment minus control: &minus;22.40 points (95% CI &minus;24.48 to &minus;20.33) </td>
+  </tr>
+</tbody>
+</table>
+<p>The response-rate intervals use the Clopper–Pearson method, while the difference interval uses the Newcombe method.</p>
+<p><strong>Test: Chi-square | Statistic: X² = 579.3856 (df = 1) | p-value &lt; 0.001 (***) | alpha = 0.05</strong></p>
+<h3 id="sec:plain-language-interpretation">Plain-language interpretation</h3>
+<p>The observed response rate was about 22.4 percentage points lower in the treatment group than in the control group. The p-value—the probability of observing a difference this large or larger by chance alone if there were truly no effect—is below 0.001, providing very strong evidence that the groups differ. We are 95% confident that the true treatment-minus-control difference lies between −24.48 and −20.33 percentage points. This establishes an association in these data, but causal interpretation requires appropriate randomization and freedom from major bias or confounding; statistical significance also does not by itself establish clinical importance.</p>
+</div>
+</body>
+</html>

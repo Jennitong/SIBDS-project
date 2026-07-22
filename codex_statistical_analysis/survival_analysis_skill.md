@@ -251,7 +251,7 @@ DO NOT shade confidence intervals in the plot. The margin should only contain th
 
 After output has been printed out in the window, lastly ask 
 
-> Would you also like the results exported as an **R Markdown (.Rmd) and rendered HTML file**?
+> Would you also like this analysis exported as an **R Markdown (.Rmd) and rendered HTML report**?
 
 **If the user said yes to export:** sub-skill defined in `survival_rmd_export.md` (located in the same directory as this file). That sub-skill handles all file generation and rendering — do not duplicate its instructions here.
 

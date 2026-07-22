@@ -368,8 +368,8 @@ strip any `groups=` prefix as above.
 
 After output has been shown, lastly ask:
 
-> Would you also like the results exported as an **R Markdown (.Rmd) and
-> rendered HTML file**?
+> Would you also like this analysis exported as an **R Markdown (.Rmd) and
+> rendered HTML report**?
 
 **If the client said yes to export:** load and follow
 `survival-rmd-export.md` (located in the same directory as this file). That

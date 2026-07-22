@@ -57,12 +57,16 @@ title: "Survival Analysis Report"
 date: "`r Sys.Date()`"
 output:
   html_document:
-    toc: true
-    toc_float: true
     html_encoding: "UTF-8"
 encoding: UTF-8
 ---
 ```
+
+**Do not add `toc: true` / `toc_float: true`.** The pandoc-free renderer
+(Step 5) does not support them -- they show up as a literal, unstyled
+`<toc id="...">...</toc>` list box at the top of the rendered HTML instead
+of a working table of contents. Omit them entirely; there is no
+table-of-contents box in the report.
 
 ### Setup Chunk (`echo=FALSE, include=FALSE`)
 
@@ -399,12 +403,15 @@ Try each step in order; move to the next only if the previous fails.
 if (!requireNamespace("markdown", quietly = TRUE)) install.packages("markdown")
 knitr::knit("survival_report.Rmd", output = "survival_report.md")
 markdown::markdownToHTML("survival_report.md", output = "survival_report.html",
-                         options = c("use_xhtml", "smartypants", "toc"),
+                         options = c("use_xhtml", "smartypants"),
                          fragment.only = FALSE)
 ```
 
 Do **not** pass `"skip_html"` -- it would suppress `<a>` tags and inline
-HTML entities.
+HTML entities. Do **not** pass `"toc"` either -- the `markdown` package
+doesn't resolve it against this document's headers, so it leaves a raw,
+unstyled `<toc id="...">...</toc>` list box at the top of the page instead
+of a real table of contents.
 
 **Step 2 -- rmarkdown render (if Pandoc is available)**
 
